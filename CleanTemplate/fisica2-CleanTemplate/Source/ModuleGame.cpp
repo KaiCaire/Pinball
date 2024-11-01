@@ -225,7 +225,7 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	emptyBoard = LoadTexture("Assets/Ruby/bg+gym.png");
+	emptyBoard = LoadTexture("Assets/Ruby/bg+mart.png");
 	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
 	spoinkSheet = LoadTexture("Assets/Ruby/spoink_sheet.png");
 
