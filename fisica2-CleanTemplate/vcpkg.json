@@ -1,6 +1,0 @@
-{
-  "dependencies": [
-    "box2d",
-    "raylib"
-  ]
-}

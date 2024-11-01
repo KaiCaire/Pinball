@@ -1,8 +1,0 @@
-C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/pkgs/raylib_x86-windows/debug/lib/raylib.lib
-C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/pkgs/raylib_x86-windows/debug/bin/raylib.dll
-C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/pkgs/raylib_x86-windows/debug/include/raylib.h
-C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/pkgs/raylib_x86-windows/debug/include/rlgl.h
-C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/pkgs/raylib_x86-windows/debug/include/raymath.h
-C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/pkgs/raylib_x86-windows/debug/lib/pkgconfig/raylib.pc
-C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/pkgs/raylib_x86-windows/debug/lib/cmake/raylib/raylib-config-version.cmake
-C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/pkgs/raylib_x86-windows/debug/lib/cmake/raylib/raylib-config.cmake
