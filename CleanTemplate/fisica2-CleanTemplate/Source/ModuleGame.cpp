@@ -170,6 +170,41 @@ private:
 	Texture2D texture;
 };
 
+class Spring : public PhysicEntity {
+public:
+	
+	
+	PhysBody spoink;
+	PhysBody springGround;
+	b2Vec2 anchorA;
+	b2Vec2 anchorB;
+	b2Vec2 axis = { 0.0f, -1.0f };
+
+	Spring(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 40, 152, b2_staticBody), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	/*b2PrismaticJoint spring = App->physics->CreatePrismaticJoint(spoink.body, springGround.body, anchorA, anchorB, axis);*/
+
+	
+	
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 2.0f, WHITE);
+	}
+
+private:
+
+	Texture2D texture;
+
+};
+
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -187,8 +222,10 @@ bool ModuleGame::Start()
 
 	emptyBoard = LoadTexture("Assets/Ruby/bg+gym.png");
 	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
+	spoinkSheet = LoadTexture("Assets/Ruby/spoink_sheet.png");
 
 	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
+	spoink = new Spring(App->physics, 465, 735, this, spoinkSheet);
 
 	return ret;
 }
@@ -212,12 +249,15 @@ update_status ModuleGame::Update()
 
 	if (ball == NULL) {
 		ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
-
 	}
-
+	
 
 	rubyBoard->Update();
 	ball->Update();
+	
+	spoink->Update();
+
+
 
 	return UPDATE_CONTINUE;
 }
@@ -229,6 +269,10 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		//compress string
 	}
 	if (IsKeyReleased(KEY_DOWN)) {
-		/*ball->ShootBall((b2Vec2)springForce);*/
+		if (IsKeyDown(KEY_SPACE)) {
+			// Apply a force to the plunger when the space key is pressed
+			b2Vec2 force(0.0f, -100.0f); // Force to shoot the ball upwards
+			
+		}
 	}
 }

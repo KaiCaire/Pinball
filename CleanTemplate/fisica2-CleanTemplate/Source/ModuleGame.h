@@ -12,6 +12,9 @@ class PhysBody;
 class PhysicEntity;
 class Board;
 class Ball;
+class Spring;
+
+
 
 class ModuleGame : public Module
 {
@@ -37,6 +40,9 @@ public:
 	Board* rubyBoard;
 	Texture2D emptyBoard;
 	Texture2D ballTex;
+
+	Spring* spoink;
+	Texture2D spoinkSheet;
 
 	Vector2 initBallPos = { 243 * 2, 378 * 2 };
 };

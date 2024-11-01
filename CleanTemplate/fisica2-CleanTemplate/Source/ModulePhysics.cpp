@@ -11,6 +11,7 @@
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
+	world = NULL;
 	debug = false;
 }
 
@@ -176,6 +177,32 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 
 	return pbody;
 }
+
+b2PrismaticJoint* ModulePhysics::CreatePrismaticJoint(b2Body* bodyA, b2Body* bodyB, b2Vec2 anchorA, b2Vec2 anchorB, b2Vec2 axis) {
+
+	//define prismatic joint
+	b2PrismaticJointDef def;
+	def.bodyA = bodyA;
+	def.bodyB = bodyB;
+	def.localAxisA.Set(axis.x, axis.y);
+	def.localAnchorA.Set(anchorA.x, anchorA.y);
+	def.localAnchorB.Set(anchorB.x, anchorB.y);
+	def.enableLimit = true;
+	def.upperTranslation = 0;
+	def.lowerTranslation = -1;
+	def.enableMotor = true;
+	def.maxMotorForce = 500;
+	def.motorSpeed = 0;
+	
+	
+	//create & add to world
+	b2PrismaticJoint* prismJoint = (b2PrismaticJoint*)world->CreateJoint(&def);
+	return prismJoint;
+
+}
+
+
+
 
 update_status ModulePhysics::PostUpdate()
 {
