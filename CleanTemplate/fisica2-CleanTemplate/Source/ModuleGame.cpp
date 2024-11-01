@@ -13,7 +13,9 @@ protected:
 		: body(_body)
 		, listener(_listener)
 	{
-		body->listener = listener;
+		if (body != nullptr) {
+			body->listener = listener;
+		}
 	}
 
 public:
@@ -170,6 +172,225 @@ private:
 	Texture2D texture;
 };
 
+class Obstacle : public PhysicEntity
+{
+public:
+
+	static constexpr int circuit1[16] = {
+	100, 663,
+	101, 723,
+	122, 740,
+	182, 776,
+	185, 790,
+	172, 801,
+	85, 742,
+	85, 661
+	};
+
+	static constexpr int circuit2[12] = {
+	296, 784,
+	308, 797,
+	391, 740,
+	392, 662,
+	382, 661,
+	374, 726
+	};
+
+	static constexpr int circuit3[26] = {
+	132, 558,
+	158, 535,
+	157, 516,
+	123, 449,
+	100, 348,
+	99, 274,
+	116, 229,
+	114, 212,
+	84, 249,
+	66, 321,
+	66, 416,
+	86, 491,
+	109, 524
+	};
+
+	static constexpr int circuit4[48] = {
+	153, 390,
+	163, 389,
+	163, 359,
+	151, 306,
+	152, 283,
+	164, 272,
+	189, 270,
+	207, 281,
+	202, 347,
+	202, 364,
+	211, 369,
+	240, 370,
+	239, 349,
+	221, 308,
+	217, 272,
+	214, 231,
+	220, 227,
+	219, 174,
+	190, 185,
+	166, 208,
+	145, 243,
+	140, 260,
+	139, 318,
+	148, 372
+	};
+
+	static constexpr int circuit5[12] = {
+	263, 227,
+	248, 227,
+	248, 176,
+	252, 173,
+	258, 172,
+	262, 177
+	};
+
+	static constexpr int circuit6[16] = {
+	294, 230,
+	301, 230,
+	304, 227,
+	304, 183,
+	300, 178,
+	294, 178,
+	290, 183,
+	290, 227
+	};
+
+	static constexpr int circuit7[40] = {
+	332, 193,
+	333, 233,
+	368, 252,
+	396, 312,
+	386, 376,
+	345, 450,
+	347, 478,
+	365, 447,
+	380, 417,
+	386, 409,
+	400, 409,
+	404, 417,
+	383, 487,
+	382, 514,
+	398, 480,
+	413, 442,
+	422, 376,
+	416, 321,
+	393, 250,
+	362, 217
+	};
+
+
+
+	Obstacle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(nullptr, _listener), texture(_texture)
+
+	{
+		CreateChain(physics, circuit1, sizeof(circuit1) / sizeof(circuit1[0]), _x, _y);
+		CreateChain(physics, circuit2, sizeof(circuit2) / sizeof(circuit2[0]), _x, _y);
+		CreateChain(physics, circuit3, sizeof(circuit3) / sizeof(circuit2[0]), _x, _y);
+		CreateChain(physics, circuit4, sizeof(circuit4) / sizeof(circuit2[0]), _x, _y);
+		CreateChain(physics, circuit5, sizeof(circuit5) / sizeof(circuit2[0]), _x, _y);
+		CreateChain(physics, circuit6, sizeof(circuit6) / sizeof(circuit2[0]), _x, _y);
+		CreateChain(physics, circuit7, sizeof(circuit7) / sizeof(circuit2[0]), _x, _y);
+
+
+
+
+	}
+
+	void Update() override
+	{
+		for (const auto& body : bodies) {
+			int x, y;
+			body->GetPhysicPosition(x, y);
+			DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 2.0f, WHITE);
+		}
+	}
+
+private:
+	Texture2D texture;
+	std::vector<PhysBody*> bodies; // Vector para almacenar los objetos
+
+
+	void CreateChain(ModulePhysics* physics, const int* circuit, int size, int _x, int _y)
+	{
+		PhysBody* body = physics->CreateChain(_x, _y, circuit, size, b2_staticBody);
+		if (body != nullptr) {
+			bodies.push_back(body);
+		}
+	}
+};
+
+class AcceleratingObstacle : public PhysicEntity 
+{
+public:
+
+	static constexpr int circuit1[26] = {
+	140, 714,
+	143, 714,
+	164, 727,
+	164, 734,
+	171, 736,
+	176, 731,
+	176, 717,
+	138, 662,
+	130, 663,
+	130, 705,
+	132, 706,
+	132, 714,
+	136, 715
+	};
+
+	static constexpr int circuit2[26] = {
+	303, 731,
+	311, 737,
+	316, 733,
+	317, 727,
+	340, 712,
+	340, 716,
+	347, 715,
+	348, 706,
+	350, 706,
+	350, 664,
+	346, 662,
+	340, 664,
+	304, 718
+	};
+
+	AcceleratingObstacle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(nullptr, _listener), texture(_texture)
+
+	{
+		CreateChain(physics, circuit1, sizeof(circuit1) / sizeof(circuit1[0]), _x, _y);
+		CreateChain(physics, circuit2, sizeof(circuit2) / sizeof(circuit2[0]), _x, _y);
+	}
+	void Update() override
+	{
+		for (const auto& body : bodies) {
+			int x, y;
+			body->GetPhysicPosition(x, y);
+			DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 2.0f, WHITE);
+		}
+	}
+
+private:
+	Texture2D texture;
+	std::vector<PhysBody*> bodies; // Vector para almacenar los objetos
+
+
+	void CreateChain(ModulePhysics* physics, const int* circuit, int size, int _x, int _y)
+	{
+		PhysBody* body = physics->CreateChain(_x, _y, circuit, size, b2_staticBody);
+		if (body != nullptr) {
+			bodies.push_back(body);
+		}
+	}
+};
+
+
 class Spring : public PhysicEntity {
 public:
 	
@@ -230,6 +451,10 @@ bool ModuleGame::Start()
 	spoinkSheet = LoadTexture("Assets/Ruby/spoink_sheet.png");
 
 	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
+	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
+	rubyAcceleratingObstacle= new AcceleratingObstacle(App->physics, 0, 0, this, emptyBoard);
+
+
 	spoink = new Spring(App->physics, 472, 735, this, spoinkSheet);
 
 	return ret;
@@ -258,6 +483,9 @@ update_status ModuleGame::Update()
 	
 
 	rubyBoard->Update();
+	rubyObstacle->Update();
+	rubyAcceleratingObstacle->Update();
+
 	ball->Update();
 	
 	spoink->Update();

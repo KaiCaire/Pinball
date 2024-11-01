@@ -12,6 +12,8 @@ class PhysBody;
 class PhysicEntity;
 class Board;
 class Ball;
+class Obstacle;
+class AcceleratingObstacle;
 class Spring;
 
 
@@ -38,6 +40,9 @@ public:
 	bool sensed;
 
 	Board* rubyBoard;
+	Obstacle* rubyObstacle;
+	AcceleratingObstacle* rubyAcceleratingObstacle;
+
 	Texture2D emptyBoard;
 	Texture2D ballTex;
 
