@@ -112,7 +112,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;winmm.lib;box2d.lib;raylib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\ccair\Documents\Programs\GitHub\PhysicsPinball\fisica2-CleanTemplate\vcpkg_installed\x86-windows\vcpkg\pkgs\box2d_x86-windows\include\box2d;C:\Users\kaicc\Documents\GitHub\PhysicsPinball\fisica2-CleanTemplate\Source\external\raylib\src\external\glfw\include\GLFW;C:\Users\kaicc\Documents\GitHub\PhysicsPinball\fisica2-CleanTemplate\Source\external\box2d\include\box2d;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\ccair\Documents\Programs\GitHub\Pinball\fisica2-CleanTemplate\vcpkg_installed\x86-windows\vcpkg\pkgs;C:\Users\ccair\Documents\Programs\GitHub\Pinball\fisica2-CleanTemplate\vcpkg_installed\x86-windows\x86-windows\include\box2d;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/pkgs/detect_compiler_x86-windows")
+  set(CMAKE_INSTALL_PREFIX "C:/Users/ccair/Documents/Programs/GitHub/Pinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/pkgs/detect_compiler_x86-windows")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/blds/detect_compiler/x86-windows-rel/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/ccair/Documents/Programs/GitHub/Pinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/blds/detect_compiler/x86-windows-rel/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

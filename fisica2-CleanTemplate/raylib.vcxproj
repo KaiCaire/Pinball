@@ -328,6 +328,7 @@
     <ClCompile Include="Source\external\raylib\src\rtext.c" />
     <ClCompile Include="Source\external\raylib\src\rtextures.c" />
     <ClCompile Include="Source\external\raylib\src\utils.c" />
+    <ClCompile Include="Source\ModuleGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\external\raylib\src\raylib.h" />

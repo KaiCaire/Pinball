@@ -3,14 +3,14 @@ Version: 2022-02-06
 Port-Version: 1
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 09b58688b4b5d5409b6037dc82b7bc66820a397add3ae2c7ea4c703819b5783c
+Abi: a4190b3c49a00262291e8f16bae7f3176495d9887fd684072fabad4fcf6ec611
 Status: install ok installed
 
 Package: vcpkg-cmake
 Version: 2023-05-04
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 22352fe4ee22280be3a1481b1a7e6d0cb45648693727f0a9ad264547d2ab9927
+Abi: d1edee178c611e2465fb80b3ea81fdff1d808e87ecf0198c1c66428a44b8b330
 Status: install ok installed
 
 Package: box2d
@@ -19,7 +19,7 @@ Port-Version: 3
 Depends: vcpkg-cmake:x64-windows, vcpkg-cmake-config:x64-windows
 Architecture: x86-windows
 Multi-Arch: same
-Abi: 73b60075c580633b86d8f9e197414842c46e630f0ca3ec20e691e3aedb7127b7
+Abi: 761788012271e526c2d50bfb103bf128dde8f45a7d63e458592d7f99f6e71be6
 Description: An open source C++ engine for simulating rigid bodies in 2D
 Status: install ok installed
 
@@ -28,7 +28,7 @@ Version: 5.0
 Depends: vcpkg-cmake:x64-windows, vcpkg-cmake-config:x64-windows
 Architecture: x86-windows
 Multi-Arch: same
-Abi: 643bcc01ac34eafed0a259db44a0cbf923bf554bcdf839cf001b7f7ec69c11d0
+Abi: 3e641fd5f3780784b651007690c6faeac03f5106429a45f28b47583728768f1c
 Description: A simple and easy-to-use library to enjoy videogames programming
 Default-Features: use-audio
 Status: install ok installed

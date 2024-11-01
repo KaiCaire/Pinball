@@ -64,6 +64,7 @@
     <ClCompile Include="Source\external\box2d\src\dynamics\b2_world.cpp" />
     <ClCompile Include="Source\external\box2d\src\dynamics\b2_world_callbacks.cpp" />
     <ClCompile Include="Source\external\box2d\src\rope\b2_rope.cpp" />
+    <ClCompile Include="Source\ModuleGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\external\box2d\src\dynamics\b2_chain_circle_contact.h" />

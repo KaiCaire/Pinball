@@ -1,2 +1,2 @@
-C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/blds/detect_compiler/x86-windows-rel/CMakeFiles/edit_cache.dir
-C:/Users/ccair/Documents/Programs/GitHub/PhysicsPinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/blds/detect_compiler/x86-windows-rel/CMakeFiles/rebuild_cache.dir
+C:/Users/ccair/Documents/Programs/GitHub/Pinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/blds/detect_compiler/x86-windows-rel/CMakeFiles/edit_cache.dir
+C:/Users/ccair/Documents/Programs/GitHub/Pinball/fisica2-CleanTemplate/vcpkg_installed/x86-windows/vcpkg/blds/detect_compiler/x86-windows-rel/CMakeFiles/rebuild_cache.dir
