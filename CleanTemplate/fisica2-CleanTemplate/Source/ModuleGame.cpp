@@ -174,29 +174,34 @@ class Spring : public PhysicEntity {
 public:
 	
 	
-	PhysBody spoink;
+	/*PhysBody spoink;
 	PhysBody springGround;
 	b2Vec2 anchorA;
-	b2Vec2 anchorB;
+	b2Vec2 anchorB;*/
 	b2Vec2 axis = { 0.0f, -1.0f };
 
 	Spring(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 40, 152, b2_staticBody), _listener)
+		: PhysicEntity(physics->CreateSpring(_x, _y, 20, 40, axis), _listener)
 		, texture(_texture)
 	{
 
 	}
 
-	/*b2PrismaticJoint spring = App->physics->CreatePrismaticJoint(spoink.body, springGround.body, anchorA, anchorB, axis);*/
-
-	
-	
-
+		
 	void Update() override
 	{
 		int x, y;
+		int width = 20;
+		int height = 40;
 		body->GetPhysicPosition(x, y);
-		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 2.0f, WHITE);
+		Vector2 position{ (float)x, (float)y };
+		float scale = 2.0f;
+		Rectangle source = { 0.0f, 0.0f, width, texture.height };
+		Rectangle dest = { position.x, position.y-texture.height, width * scale, (float)texture.height * scale };
+
+		Vector2 origin = { (float)(25), (float)(texture.height / scale) }; //???
+		float rotation = body->GetRotation() * RAD2DEG;
+		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 	}
 
 private:
@@ -225,7 +230,7 @@ bool ModuleGame::Start()
 	spoinkSheet = LoadTexture("Assets/Ruby/spoink_sheet.png");
 
 	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
-	spoink = new Spring(App->physics, 465, 735, this, spoinkSheet);
+	spoink = new Spring(App->physics, 472, 735, this, spoinkSheet);
 
 	return ret;
 }

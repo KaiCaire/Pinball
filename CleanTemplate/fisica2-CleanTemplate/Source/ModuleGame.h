@@ -44,5 +44,5 @@ public:
 	Spring* spoink;
 	Texture2D spoinkSheet;
 
-	Vector2 initBallPos = { 243 * 2, 378 * 2 };
+	Vector2 initBallPos = { 243 * 2, 250 * 2 };
 };

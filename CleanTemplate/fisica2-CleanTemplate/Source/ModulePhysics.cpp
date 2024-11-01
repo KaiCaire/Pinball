@@ -12,7 +12,7 @@
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	world = NULL;
-	debug = false;
+	debug = true;
 }
 
 // Destructor
@@ -178,26 +178,39 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 	return pbody;
 }
 
-b2PrismaticJoint* ModulePhysics::CreatePrismaticJoint(b2Body* bodyA, b2Body* bodyB, b2Vec2 anchorA, b2Vec2 anchorB, b2Vec2 axis) {
+PhysBody* ModulePhysics::CreateSpring(int x, int y, int width, int height, b2Vec2 axis) {
+
+	//Create spring body A
+	PhysBody* spring = CreateRectangle(x, y, width, height, b2_dynamicBody);
+
+	//Create spring body B
+	b2BodyDef springAnchorDef;
+	springAnchorDef.type = b2_staticBody;
+	springAnchorDef.position.Set(x, (y - height));
+	b2Body* springAnchor = world->CreateBody(&springAnchorDef);
+
 
 	//define prismatic joint
 	b2PrismaticJointDef def;
-	def.bodyA = bodyA;
-	def.bodyB = bodyB;
-	def.localAxisA.Set(axis.x, axis.y);
-	def.localAnchorA.Set(anchorA.x, anchorA.y);
-	def.localAnchorB.Set(anchorB.x, anchorB.y);
+	def.bodyA = springAnchor;
+	def.bodyB = spring->body;
+	def.localAxisA.Set(axis.x/2, axis.y/2);
+	def.localAnchorA.Set(0, 0);
+	def.localAnchorB.Set(0, 0);
 	def.enableLimit = true;
 	def.upperTranslation = 0;
 	def.lowerTranslation = -1;
-	def.enableMotor = true;
-	def.maxMotorForce = 500;
-	def.motorSpeed = 0;
+	def.localAxisA.Set(0, 1);
+	//def.enableMotor = true;
+	//def.maxMotorForce = 500;
+	//def.motorSpeed = 0;
 	
 	
 	//create & add to world
-	b2PrismaticJoint* prismJoint = (b2PrismaticJoint*)world->CreateJoint(&def);
-	return prismJoint;
+	world-> CreateJoint(&def);
+
+
+	return spring;
 
 }
 

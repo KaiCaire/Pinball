@@ -50,7 +50,7 @@ public:
 	PhysBody* CreateRectangle(int x, int y, int width, int height, b2BodyType bType);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, b2BodyType bType);
 	PhysBody* CreateChain(int x, int y, const int* points, int size, b2BodyType bType);
-	b2PrismaticJoint* CreatePrismaticJoint(b2Body* bodyA, b2Body* bodyB, b2Vec2 anchorA, b2Vec2 anchorB, b2Vec2 axis);
+	PhysBody* CreateSpring(int x, int y, int width, int height, b2Vec2 axis);
 
 	void BeginContact(b2Contact* contact);
 	bool debug = false;
