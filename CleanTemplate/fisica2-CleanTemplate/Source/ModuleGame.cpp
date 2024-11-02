@@ -390,25 +390,16 @@ private:
 	}
 };
 
-
 class Spring : public PhysicEntity {
 public:
-	
-	
-	/*PhysBody spoink;
-	PhysBody springGround;
-	b2Vec2 anchorA;
-	b2Vec2 anchorB;*/
-	b2Vec2 axis = { 0.0f, -1.0f };
+	b2Vec2 axis = { 0.0f, 0.0f };
 
-	Spring(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+	Spring(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
 		: PhysicEntity(physics->CreateSpring(_x, _y, 20, 40, axis), _listener)
 		, texture(_texture)
 	{
-
 	}
 
-		
 	void Update() override
 	{
 		int x, y;
@@ -418,7 +409,7 @@ public:
 		Vector2 position{ (float)x, (float)y };
 		float scale = 2.0f;
 		Rectangle source = { 0.0f, 0.0f, width, texture.height };
-		Rectangle dest = { position.x, position.y-texture.height, width * scale, (float)texture.height * scale };
+		Rectangle dest = { position.x, position.y - texture.height, width * scale, (float)texture.height * scale };
 
 		Vector2 origin = { (float)(25), (float)(texture.height / scale) }; //???
 		float rotation = body->GetRotation() * RAD2DEG;
@@ -426,9 +417,56 @@ public:
 	}
 
 private:
-
 	Texture2D texture;
+};
 
+class Pikachu : public PhysicEntity
+{
+public:
+	Pikachu(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 30, 40, b2_staticBody), _listener), texture(_texture)
+	{
+		// Initialize the bounding box based on the texture
+		width = 25;
+		height = 40;
+	}
+
+	void Update() override
+	{
+		Vector2 position = GetColliderPosition();
+		float scale = 2.0f;
+
+		Rectangle source = { 0.0f, 0.0f, (float)width, (float)texture.height };
+		Rectangle dest = { position.x, position.y - (texture.height / 1.5f), width * scale, (float)texture.height * scale };
+
+		Vector2 origin = GetTextureOrigin(); // Updated method to get the origin
+		float rotation = body->GetRotation() * RAD2DEG;
+
+		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
+	}
+
+	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
+	{
+		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
+	}
+
+private:
+	Texture2D texture;
+	int width;
+	int height;
+
+	Vector2 GetColliderPosition() const
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		return { (float)x, (float)y };
+	}
+
+	Vector2 GetTextureOrigin() const
+	{
+		// Adjust origin based on width and height to center the texture correctly
+		return { (float)(width), (float)(texture.height / 2) };
+	}
 };
 
 
@@ -449,14 +487,15 @@ bool ModuleGame::Start()
 	emptyBoard = LoadTexture("Assets/Ruby/bg+mart.png");
 	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
 	spoinkSheet = LoadTexture("Assets/Ruby/spoink_sheet.png");
+	pikachuSheet = LoadTexture("Assets/Ruby/pikachu_sheet.png");
 
 	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
 	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
 	rubyAcceleratingObstacle= new AcceleratingObstacle(App->physics, 0, 0, this, emptyBoard);
 
 
-	spoink = new Spring(App->physics, 472, 735, this, spoinkSheet);
-
+	spoink = new Spring(App->physics, 472, 755, this, spoinkSheet);
+	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 	return ret;
 }
 
@@ -468,7 +507,8 @@ bool ModuleGame::CleanUp()
 	UnloadTexture(ballTex);
 	delete ball;
 	delete rubyBoard;
-
+	delete spoink;
+	delete pikachu;
 
 	return true;
 }
@@ -487,10 +527,8 @@ update_status ModuleGame::Update()
 	rubyAcceleratingObstacle->Update();
 
 	ball->Update();
-	
+	pikachu->Update();
 	spoink->Update();
-
-
 
 	return UPDATE_CONTINUE;
 }
@@ -498,7 +536,8 @@ update_status ModuleGame::Update()
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
 	/*App->audio->PlayFx(bonus_fx);*/
-	if (IsKeyPressed(KEY_DOWN)) {
+	if (IsKeyPressed(KEY_DOWN)) 
+	{
 		//compress string
 	}
 	if (IsKeyReleased(KEY_DOWN)) {

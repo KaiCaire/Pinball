@@ -15,6 +15,7 @@ class Ball;
 class Obstacle;
 class AcceleratingObstacle;
 class Spring;
+class Pikachu;
 
 
 
@@ -48,6 +49,8 @@ public:
 
 	Spring* spoink;
 	Texture2D spoinkSheet;
+	Pikachu* pikachu;
+	Texture2D pikachuSheet;
 
 	Vector2 initBallPos = { 243 * 2, 250 * 2 };
 };
