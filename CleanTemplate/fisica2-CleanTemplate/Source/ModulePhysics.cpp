@@ -397,46 +397,13 @@ void ModulePhysics::BeginContact(b2Contact* contact)
 	PhysBody* physA = (PhysBody*)dataA.pointer;
 	PhysBody* physB = (PhysBody*)dataB.pointer;
 
-	if(physA->id == 2)
+	if(physA->id >= 2)
 	{ 
 		if (physA && physA->listener != NULL)
-			physA->listener->OnCollision(physA, physB,1);
+			physA->listener->OnCollision(physA, physB, physA->id);
 
 		if (physB && physB->listener != NULL)
-			physB->listener->OnCollision(physB, physA,1);
-	}
-	else if (physA->id == 3)
-	{
-		if (physA && physA->listener != NULL)
-			physA->listener->OnCollision(physA, physB, 2);
-
-		if (physB && physB->listener != NULL)
-			physB->listener->OnCollision(physB, physA, 2);
-	}
-	else if (physA->id == 4)
-	{
-		if (physA && physA->listener != NULL)
-			physA->listener->OnCollision(physA, physB, 3);
-
-		if (physB && physB->listener != NULL)
-			physB->listener->OnCollision(physB, physA, 3);
+			physB->listener->OnCollision(physB, physA, physA->id);
 	}
 
-	else if (physA->id == 5)
-	{
-		if (physA && physA->listener != NULL)
-			physA->listener->OnCollision(physA, physB, 4);
-
-		if (physB && physB->listener != NULL)
-			physB->listener->OnCollision(physB, physA, 4);
-	}
-
-	else if (physA->id == 6)
-	{
-		if (physA && physA->listener != NULL)
-			physA->listener->OnCollision(physA, physB, 5);
-
-		if (physB && physB->listener != NULL)
-			physB->listener->OnCollision(physB, physA, 5);
-	}
 }

@@ -179,12 +179,20 @@ class Obstacle : public PhysicEntity
 public:
 
 	static constexpr int circuit1[12] = {
-		135, 663,
-		174, 714,
-		174, 735,
-		128, 705,
-		128, 664,
-		135, 660
+		138, 662,
+		175, 716,
+		175, 725,
+		173, 727,
+		137, 669, 
+		132, 663
+	};
+
+	static constexpr int circuit10[10] = {
+		133, 660,
+		169, 726,
+		140, 711,
+		130, 701,
+		130, 678
 	};
 
 	static constexpr int circuit2[38] = {
@@ -206,7 +214,7 @@ public:
 		390, 300,
 		372, 255,
 		332, 231,
-		332, 209,
+		332, 209
 	};
 
 	static constexpr int circuit3[20] = {
@@ -267,7 +275,7 @@ public:
 		154, 228,
 		164, 211,
 		180, 194,
-		208, 179,
+		208, 179
 	};
 
 	static constexpr int circuit6[50] = {
@@ -336,22 +344,28 @@ public:
 	};
 
 
-	static constexpr int circuit9[16] = {
-		348, 663,
-		349, 704,
-		348, 713,
-		316, 734,
-		310, 734,
-		306, 730,
-		306, 717,
-		342, 663
+	static constexpr int circuit9[8] = {
+		347, 663,
+		342, 663,
+		305, 716,
+		305, 725
 	};
+	static constexpr int circuit19[10] = {
+
+		347, 662,
+		350, 665,
+		349, 704,
+		313, 727,
+		307, 726
+	};
+
 
 	Obstacle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
 		: PhysicEntity(nullptr, _listener), texture(_texture)
 
 	{
 		CreateChain(physics, circuit1, sizeof(circuit1) / sizeof(circuit1[0]), _x, _y,2);
+
 		CreateChain(physics, circuit2, sizeof(circuit2) / sizeof(circuit2[0]), _x, _y,1);
 		CreateChain(physics, circuit3, sizeof(circuit3) / sizeof(circuit3[0]), _x, _y,1);
 		CreateChain(physics, circuit4, sizeof(circuit4) / sizeof(circuit4[0]), _x, _y,1);
@@ -359,7 +373,12 @@ public:
 		CreateChain(physics, circuit6, sizeof(circuit6) / sizeof(circuit6[0]), _x, _y,1);
 		CreateChain(physics, circuit7, sizeof(circuit7) / sizeof(circuit7[0]), _x, _y,1);
 		CreateChain(physics, circuit8, sizeof(circuit8) / sizeof(circuit8[0]), _x, _y,1);
+
 		CreateChain(physics, circuit9, sizeof(circuit9) / sizeof(circuit9[0]), _x, _y,3);
+		CreateChain(physics, circuit19, sizeof(circuit19) / sizeof(circuit19[0]), _x, _y, 1);
+		CreateChain(physics, circuit10, sizeof(circuit10) / sizeof(circuit10[0]), _x, _y, 1);
+
+
 
 	}
 
@@ -420,7 +439,7 @@ class Pikachu : public PhysicEntity
 {
 public:
 	Pikachu(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
-		: PhysicEntity(physics->CreateRectangleSensor(_x, _y, 20,20, b2_staticBody, 1), _listener), texture(_texture)
+		: PhysicEntity(physics->CreateRectangleSensor(_x, _y, 20,20, b2_staticBody, 5), _listener), texture(_texture)
 	{
 		// Initialize the bounding box based on the texture
 		width = 25;
@@ -469,7 +488,7 @@ class PalancaDer : public PhysicEntity
 {
 public:
 	PalancaDer(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 60, 20, b2_kinematicBody,5), _listener), texture(_texture)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 60, 20, b2_kinematicBody,1), _listener), texture(_texture)
 	{
 		// Initialize the bounding box based on the texture
 		width = 32;
@@ -548,7 +567,7 @@ class PalancaIzq : public PhysicEntity
 {
 public:
 	PalancaIzq(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 58, 20, b2_kinematicBody, 4), _listener), texture(_texture)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 58, 20, b2_kinematicBody, 1), _listener), texture(_texture)
 	{
 		// Initialize the bounding box based on the texture
 		width = 32;
@@ -722,10 +741,10 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 		//compress string
 	}
 	b2Vec2 force(0.0f, 0.0f);
-	if (dir == 1) force = { 0.7f, -0.46 };
-	else if (dir == 2) force = { -0.7f, -0.6f };
-	else if (dir == 5) printf("puntos");
-	else if (dir == 4) printf("puntos2");
+	if (dir == 2) force = { 0.7f, -0.46 };
+	else if (dir == 3) force = { -0.7f, -0.6f };
+	else if (dir == 6) printf("puntos");
+	else if (dir == 5) printf("puntos2");
 
 	//else if (dir == 3 && palancaIzq->x !=0)
 	//{
