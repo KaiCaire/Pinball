@@ -49,8 +49,8 @@ public:
 		Vector2 position{ (float)x, (float)y };
 		float scale = 2.0f;
 		Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
-		Rectangle dest = { position.x - (texture.width / 2), position.y - (texture.height / 2), (float)texture.width * scale, (float)texture.height * scale };
-		Vector2 origin = { (float)(texture.width / 1.0f), (float)(texture.height / 1.0f) };
+		Rectangle dest = { position.x, position.y, (float)texture.width * scale, (float)texture.height * scale };
+		Vector2 origin = { (float)(texture.width * scale / 2), (float)(texture.height * scale / 2) };
 		float rotation = body->GetRotation() * RAD2DEG;
 		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 	}
@@ -407,7 +407,7 @@ private:
 
 class Spring : public PhysicEntity {
 public:
-	b2Vec2 axis = { 0.0f, 0.0f };
+	b2Vec2 axis = { 0.0f, -1.0f };
 
 	Spring(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
 		: PhysicEntity(physics->CreateSpring(_x, _y, 20, 40, axis), _listener)
@@ -424,9 +424,9 @@ public:
 		Vector2 position{ (float)x, (float)y };
 		float scale = 2.0f;
 		Rectangle source = { 0.0f, 0.0f, width, texture.height };
-		Rectangle dest = { position.x, position.y - texture.height, width * scale, (float)texture.height * scale };
+		Rectangle dest = { position.x, position.y, (float)width * scale, (float)texture.height * scale };
 
-		Vector2 origin = { (float)(25), (float)(texture.height / scale) }; 
+		Vector2 origin = { source.width * scale /2 , source.height * scale / 2 }; 
 		float rotation = body->GetRotation() * RAD2DEG;
 		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 	}
@@ -658,11 +658,11 @@ bool ModuleGame::Start()
 	bool ret = true;
 
 	emptyBoard = LoadTexture("Assets/Ruby/bg+mart.png");
-	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
 	spoinkSheet = LoadTexture("Assets/Ruby/spoink_sheet.png");
 	pikachuSheet = LoadTexture("Assets/Ruby/pikachu_sheet.png");
 	palancaizqSheet = LoadTexture("Assets/Ruby/Left_Flipper.png");
 	palancaderSheet = LoadTexture("Assets/Ruby/Right_Flipper.png");
+	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
 
 	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
 	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
@@ -685,39 +685,44 @@ bool ModuleGame::Start()
 update_status ModuleGame::Update()
 {
 
-	if (ball == NULL) {
-		ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
-	}
+	
 	
 	if (IsKeyPressed(KEY_ONE))
 	{
 		entities.emplace_back(new Ball(App->physics, GetMouseX(), GetMouseY(), this, ballTex));
 
 	}
+	
 	rubyBoard->Update();
 	rubyObstacle->Update();
 	palancaDer->Update();
 	palancaIzq->Update();
+	
 
 
-	if (IsKeyPressed(KEY_SPACE)) {
+	if (ball == NULL) {
+		ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
+	}
+
+
+	if (IsKeyPressed(KEY_DOWN)) {
 		// Apply a force to the plunger when the space key is pressed
 		b2Vec2 force(0.0f, -1.0f); // Force to shoot the ball upwards
 		ball->ShootBall(force);
 	}
 
-	if (IsKeyPressed(KEY_E)) {
+	if (IsKeyPressed(KEY_RIGHT)) {
 		palancaDer->rotate = true;
 	}
-	else if (IsKeyReleased(KEY_E))
+	else if (IsKeyReleased(KEY_RIGHT))
 	{
 		palancaDer->rotate = false;
 	}
 
-	if (IsKeyPressed(KEY_Q)) {
+	if (IsKeyPressed(KEY_LEFT)) {
 		palancaIzq->rotate = true;
 	}
-	else if (IsKeyReleased(KEY_Q))
+	else if (IsKeyReleased(KEY_LEFT))
 	{
 		palancaIzq->rotate = false;
 	}
@@ -725,9 +730,10 @@ update_status ModuleGame::Update()
 	if (IsKeyPressed(KEY_A)) {
 		printf("%d, %d, \n", GetMouseX(), GetMouseY());
 	}
-	ball->Update();
+	
 	pikachu->Update();
 	spoink->Update();
+	ball->Update();
 
 	return UPDATE_CONTINUE;
 }

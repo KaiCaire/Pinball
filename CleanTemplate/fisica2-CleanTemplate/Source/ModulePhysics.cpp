@@ -185,7 +185,8 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 PhysBody* ModulePhysics::CreateSpring(int x, int y, int width, int height, b2Vec2 axis) {
 
 	//Create spring body A
-	PhysBody* spring = CreateRectangle(x, y, width, height, b2_dynamicBody, 0);
+	float scale = 2.0f;
+	PhysBody* spring = CreateRectangle(x, y, width*scale, height*scale, b2_dynamicBody, 0);
 
 	//Create spring body B
 	b2BodyDef springAnchorDef;
@@ -203,8 +204,8 @@ PhysBody* ModulePhysics::CreateSpring(int x, int y, int width, int height, b2Vec
 	def.localAnchorB.Set(0, 0);
 	def.enableLimit = true;
 	def.upperTranslation = 0;
-	def.lowerTranslation = -1;
-	def.localAxisA.Set(0, 1);
+	def.lowerTranslation = -10.0f;
+	def.localAxisA.Set(axis.x, axis.y);
 	//def.enableMotor = true;
 	//def.maxMotorForce = 500;
 	//def.motorSpeed = 0;
