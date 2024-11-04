@@ -46,7 +46,7 @@ update_status ModulePhysics::PreUpdate()
 			PhysBody* pb1 = (PhysBody*)data1.pointer;
 			PhysBody* pb2 = (PhysBody*)data2.pointer;
 			if (pb1 && pb2 && pb1->listener)
-				pb1->listener->OnCollision(pb1, pb2);
+				pb1->listener->OnCollision(pb1, pb2, pb1->id);
 		}
 	}
 
@@ -84,7 +84,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType bType
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2BodyType bType)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2BodyType bType, int inf)
 {
 	PhysBody* pbody = new PhysBody();
 
@@ -103,6 +103,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2
 
 	b->CreateFixture(&fixture);
 
+	pbody->id = inf;
 	pbody->body = b;
 	pbody->width = (int)(width * 0.5f);
 	pbody->height = (int)(height * 0.5f);
@@ -110,7 +111,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height, b2BodyType bType)
+PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height, b2BodyType bType, int inf)
 {
 	PhysBody* pbody = new PhysBody();
 
@@ -131,6 +132,7 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 
 	b->CreateFixture(&fixture);
 
+	pbody->id = inf;
 	pbody->body = b;
 	pbody->width = width;
 	pbody->height = height;
@@ -138,7 +140,7 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, b2BodyType bType)
+PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, b2BodyType bType, int inf)
 {
 	PhysBody* pbody = new PhysBody();
 
@@ -146,6 +148,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 	body.type = bType;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
+	
 
 	b2Body* b = world->CreateBody(&body);
 
@@ -174,6 +177,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 
 	pbody->body = b;
 	pbody->width = pbody->height = 0;
+	pbody->id = inf;
 
 	return pbody;
 }
@@ -181,7 +185,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 PhysBody* ModulePhysics::CreateSpring(int x, int y, int width, int height, b2Vec2 axis) {
 
 	//Create spring body A
-	PhysBody* spring = CreateRectangle(x, y, width, height, b2_dynamicBody);
+	PhysBody* spring = CreateRectangle(x, y, width, height, b2_dynamicBody, 0);
 
 	//Create spring body B
 	b2BodyDef springAnchorDef;
@@ -225,10 +229,6 @@ update_status ModulePhysics::PostUpdate()
 	{
 		debug = !debug;
 	}
-
-
-
-
 
 	if (!debug)
 	{
@@ -393,14 +393,50 @@ void ModulePhysics::BeginContact(b2Contact* contact)
 {
 	b2BodyUserData dataA = contact->GetFixtureA()->GetBody()->GetUserData();
 	b2BodyUserData dataB = contact->GetFixtureB()->GetBody()->GetUserData();
-
+	
 	PhysBody* physA = (PhysBody*)dataA.pointer;
 	PhysBody* physB = (PhysBody*)dataB.pointer;
 
-	if (physA && physA->listener != NULL)
-		physA->listener->OnCollision(physA, physB);
+	if(physA->id == 2)
+	{ 
+		if (physA && physA->listener != NULL)
+			physA->listener->OnCollision(physA, physB,1);
 
-	if (physB && physB->listener != NULL)
-		physB->listener->OnCollision(physB, physA);
+		if (physB && physB->listener != NULL)
+			physB->listener->OnCollision(physB, physA,1);
+	}
+	else if (physA->id == 3)
+	{
+		if (physA && physA->listener != NULL)
+			physA->listener->OnCollision(physA, physB, 2);
 
+		if (physB && physB->listener != NULL)
+			physB->listener->OnCollision(physB, physA, 2);
+	}
+	else if (physA->id == 4)
+	{
+		if (physA && physA->listener != NULL)
+			physA->listener->OnCollision(physA, physB, 3);
+
+		if (physB && physB->listener != NULL)
+			physB->listener->OnCollision(physB, physA, 3);
+	}
+
+	else if (physA->id == 5)
+	{
+		if (physA && physA->listener != NULL)
+			physA->listener->OnCollision(physA, physB, 4);
+
+		if (physB && physB->listener != NULL)
+			physB->listener->OnCollision(physB, physA, 4);
+	}
+
+	else if (physA->id == 6)
+	{
+		if (physA && physA->listener != NULL)
+			physA->listener->OnCollision(physA, physB, 5);
+
+		if (physB && physB->listener != NULL)
+			physB->listener->OnCollision(physB, physA, 5);
+	}
 }

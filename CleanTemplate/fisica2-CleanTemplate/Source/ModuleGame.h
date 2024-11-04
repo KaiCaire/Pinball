@@ -13,10 +13,11 @@ class PhysicEntity;
 class Board;
 class Ball;
 class Obstacle;
-class AcceleratingObstacle;
 class Spring;
 class Pikachu;
 
+class PalancaDer;
+class PalancaIzq;
 
 
 class ModuleGame : public Module
@@ -28,7 +29,7 @@ public:
 	bool Start();
 	update_status Update();
 	bool CleanUp();
-	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+	void OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir);
 
 public:
 
@@ -36,21 +37,27 @@ public:
 
 	PhysBody* sensor;
 	Ball* ball;
-	int ballRad = 10;
+	int ballRad = 15;
 	Vector2 springForce = { 0.0f, -10.0f };
 	bool sensed;
 
 	Board* rubyBoard;
 	Obstacle* rubyObstacle;
-	AcceleratingObstacle* rubyAcceleratingObstacle;
 
 	Texture2D emptyBoard;
 	Texture2D ballTex;
+	Texture2D palancaderSheet;
+	Texture2D palancaizqSheet;
 
 	Spring* spoink;
 	Texture2D spoinkSheet;
 	Pikachu* pikachu;
+	PalancaDer* palancaDer;
+	PalancaIzq* palancaIzq;
+
 	Texture2D pikachuSheet;
 
 	Vector2 initBallPos = { 243 * 2, 250 * 2 };
+
+	int cnt = 0;
 };
