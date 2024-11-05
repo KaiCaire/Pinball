@@ -185,16 +185,8 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 b2PrismaticJoint* ModulePhysics::CreateSpring(/*int x, int y, int width, int height, */PhysBody* bodyA, PhysBody* bodyB, b2Vec2 axis) {
 
 	
-	//Create spring body A
+
 	float scale = 2.0f;
-	/*bodyA = CreateRectangle(x, y, width*scale, height*scale, b2_dynamicBody, 0);*/
-
-	//Create spring body B
-	/*b2BodyDef springAnchorDef;
-	springAnchorDef.type = b2_staticBody;
-	springAnchorDef.position.Set(x, (y - height ));
-	b2Body* springAnchor = world->CreateBody(&springAnchorDef);*/
-
 
 	//define prismatic joint
 	b2PrismaticJointDef def;
@@ -202,19 +194,17 @@ b2PrismaticJoint* ModulePhysics::CreateSpring(/*int x, int y, int width, int hei
 	def.bodyB = bodyA->body;
 	def.localAnchorA.Set(0, 0);
 	def.localAnchorB.Set(0, 0);
+	def.upperTranslation = 1.5f; 
+	def.lowerTranslation = -1.5f; // how far does the spring extend
 	def.enableLimit = true;
-	def.upperTranslation = 50.0f; 
-	def.lowerTranslation = -50.0f; // how far does the spring extend
 	def.localAxisA.Set(axis.x, axis.y);
 	def.enableMotor = true;
-	def.maxMotorForce = 50.0f;
-	def.motorSpeed = 10.0f;
-	
+	def.maxMotorForce = 700.0f;
 
-	bodyA->body->SetGravityScale(1.0);
 	//create & add to world
 	b2PrismaticJoint* prismaticJoint = (b2PrismaticJoint*)world->CreateJoint(&def);
 
+	//prismaticJoint->SetLimits(PIXEL_TO_METERS(7), PIXEL_TO_METERS(-7));
 
 	return prismaticJoint;
 

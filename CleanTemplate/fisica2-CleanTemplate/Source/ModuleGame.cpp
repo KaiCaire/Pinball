@@ -42,6 +42,8 @@ public:
 
 	}
 
+	~Ball() {};
+
 	void Update() override
 	{
 		int x, y;
@@ -66,7 +68,6 @@ public:
 
 		body->body->SetTransform(pos, 0.0f);
 	}
-
 
 private:
 	Texture2D texture;
@@ -415,7 +416,7 @@ private:
 
 class Spring : public PhysicEntity {
 public:
-	b2Vec2 axis = { 0.0f, 1.0f };
+	b2Vec2 axis = { 0.0f, -1.0f };
 	b2PrismaticJoint* joint;
 	PhysBody* bodyA;
 	PhysBody* bodyB;
@@ -736,8 +737,7 @@ update_status ModuleGame::Update()
 
 	if (IsKeyPressed(KEY_ONE))
 	{
-		entities.emplace_back(new Ball(App->physics, GetMouseX(), GetMouseY(), this, ballTex));
-
+		ball = new Ball(App->physics, GetMouseX(), GetMouseY(), this, ballTex);	
 	}
 	
 	rubyBoard->Update();
@@ -758,19 +758,20 @@ update_status ModuleGame::Update()
 		
 		if (IsKeyPressed(KEY_DOWN))
 		{
-			spoink->joint->SetMotorSpeed(50.0f);
+			
+			spoink->joint->SetMotorSpeed(-0.5f);
+			
 		}
 		else if (IsKeyReleased(KEY_DOWN))
 		{
-			spoink->joint->SetMotorSpeed(-50.0f);
-		
-			/*canImpulse = false;*/
-
+			
+			spoink->joint->SetMotorSpeed(200.0f);
+			
+			canImpulse = false;
 		}
-		/*else spoink->joint->SetMotorSpeed(0.0f);*/
-		
+				
 
-		//eso seria el joint pero de momento no me va jkhfdshf
+	
 		if (IsKeyPressed(KEY_SPACE)) {
 			// Apply a force to the plunger when the space key is pressed
 			b2Vec2 force(0.0f, -0.8f);
@@ -780,6 +781,19 @@ update_status ModuleGame::Update()
 		}
 	
 	}
+
+
+	float spoinkPos = spoink->joint->GetJointTranslation();
+
+	if (spoinkPos >= spoink->joint->GetUpperLimit() -0.001f) {
+		// Joint has reached or is very close to the upper limit
+		spoink->joint->SetMotorSpeed(-0.2f);  // Move it back down
+	}
+	else if (spoinkPos <= spoink->joint->GetLowerLimit() + 0.001f) {
+		// Joint has reached or is very close to the lower limit
+		spoink->joint->SetMotorSpeed(0.0f);  // Stop at the bottom
+	}
+
 
 	if (IsKeyPressed(KEY_RIGHT)) {
 		palancaDer->rotate = true;
@@ -832,8 +846,13 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	}
 	else if (dir == Dead) dead = true;
 
+	if (bodyA->id == SpringImpulser || bodyB->id == SpringImpulser) {
+		canImpulse = true;
+	}
+
+
 	// Force to shoot the ball upwards
-	ball->ShootBall(force);
+	/*ball->ShootBall(force);*/
 }
 
 // Load assets
