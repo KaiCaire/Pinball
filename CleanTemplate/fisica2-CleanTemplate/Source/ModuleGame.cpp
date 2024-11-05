@@ -364,19 +364,19 @@ public:
 		: PhysicEntity(nullptr, _listener), texture(_texture)
 
 	{
-		CreateChain(physics, circuit1, sizeof(circuit1) / sizeof(circuit1[0]), _x, _y,2);
+		CreateChain(physics, circuit1, sizeof(circuit1) / sizeof(circuit1[0]), _x, _y, LeftImpulser);
+		CreateChain(physics, circuit10, sizeof(circuit10) / sizeof(circuit10[0]), _x, _y, NoInteraction);
 
-		CreateChain(physics, circuit2, sizeof(circuit2) / sizeof(circuit2[0]), _x, _y,1);
-		CreateChain(physics, circuit3, sizeof(circuit3) / sizeof(circuit3[0]), _x, _y,1);
-		CreateChain(physics, circuit4, sizeof(circuit4) / sizeof(circuit4[0]), _x, _y,1);
-		CreateChain(physics, circuit5, sizeof(circuit5) / sizeof(circuit5[0]), _x, _y,1);
-		CreateChain(physics, circuit6, sizeof(circuit6) / sizeof(circuit6[0]), _x, _y,1);
-		CreateChain(physics, circuit7, sizeof(circuit7) / sizeof(circuit7[0]), _x, _y,1);
-		CreateChain(physics, circuit8, sizeof(circuit8) / sizeof(circuit8[0]), _x, _y,1);
+		CreateChain(physics, circuit2, sizeof(circuit2) / sizeof(circuit2[0]), _x, _y, NoInteraction);
+		CreateChain(physics, circuit3, sizeof(circuit3) / sizeof(circuit3[0]), _x, _y, NoInteraction);
+		CreateChain(physics, circuit4, sizeof(circuit4) / sizeof(circuit4[0]), _x, _y, NoInteraction);
+		CreateChain(physics, circuit5, sizeof(circuit5) / sizeof(circuit5[0]), _x, _y, NoInteraction);
+		CreateChain(physics, circuit6, sizeof(circuit6) / sizeof(circuit6[0]), _x, _y, NoInteraction);
+		CreateChain(physics, circuit7, sizeof(circuit7) / sizeof(circuit7[0]), _x, _y, NoInteraction);
+		CreateChain(physics, circuit8, sizeof(circuit8) / sizeof(circuit8[0]), _x, _y, NoInteraction);
 
-		CreateChain(physics, circuit9, sizeof(circuit9) / sizeof(circuit9[0]), _x, _y,3);
-		CreateChain(physics, circuit19, sizeof(circuit19) / sizeof(circuit19[0]), _x, _y, 1);
-		CreateChain(physics, circuit10, sizeof(circuit10) / sizeof(circuit10[0]), _x, _y, 1);
+		CreateChain(physics, circuit9, sizeof(circuit9) / sizeof(circuit9[0]), _x, _y, RightImpulser);
+		CreateChain(physics, circuit19, sizeof(circuit19) / sizeof(circuit19[0]), _x, _y, NoInteraction);
 
 
 
@@ -412,7 +412,7 @@ public:
 	PhysBody* bodyA;
 
 	Spring(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture) 
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 40, 80, b2_dynamicBody, 1), _listener)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 40, 80, b2_dynamicBody, NoInteraction), _listener)
 		, texture(_texture)
 	{
 		
@@ -446,7 +446,7 @@ class Pikachu : public PhysicEntity
 {
 public:
 	Pikachu(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
-		: PhysicEntity(physics->CreateRectangleSensor(_x, _y, 20,20, b2_staticBody, 5), _listener), texture(_texture)
+		: PhysicEntity(physics->CreateRectangleSensor(_x, _y, 20,20, b2_staticBody, PikachuImpulser), _listener), texture(_texture)
 	{
 		// Initialize the bounding box based on the texture
 		width = 25;
@@ -495,7 +495,7 @@ class PalancaDer : public PhysicEntity
 {
 public:
 	PalancaDer(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 60, 20, b2_kinematicBody,1), _listener), texture(_texture)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 60, 20, b2_kinematicBody, NoInteraction), _listener), texture(_texture)
 	{
 		// Initialize the bounding box based on the texture
 		width = 32;
@@ -679,9 +679,8 @@ bool ModuleGame::Start()
 	palancaDer = new PalancaDer(App->physics, 285, 798, this, palancaderSheet);
 	palancaIzq = new PalancaIzq(App->physics, 198, 798, this, palancaizqSheet);
 
-
-	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, 6);
-	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, 5);
+	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, PointsImpulser);
+	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, TopPoints);
 
 	music = LoadMusicStream("Assets/Ruby/Music Tracks/RedTableTrack.mp3");
 
@@ -778,11 +777,15 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	{
 		//compress string
 	}
+
 	b2Vec2 force(0.0f, 0.0f);
-	if (dir == 2) force = { 0.7f, -0.46 };
-	else if (dir == 3) force = { -0.7f, -0.6f };
-	else if (dir == 6) printf("puntos");
-	else if (dir == 5) printf("puntos2");
+	if (dir == LeftImpulser) force = { 0.4f, -0.9 };
+	else if (dir == RightImpulser) force = { -0.4f, -0.9f };
+
+	else if (dir == TopPoints) printf("puntos");
+	else if (dir == PointsImpulser) printf("puntos2");
+	else if (dir == PikachuImpulser) printf("puntos3");
+
 
 	//else if (dir == 3 && palancaIzq->x !=0)
 	//{

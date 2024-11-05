@@ -19,6 +19,20 @@ class Pikachu;
 class PalancaDer;
 class PalancaIzq;
 
+#define NoInteraction 1 
+
+
+#define LeftImpulser 2 
+#define RightImpulser 3 
+
+#define TopPoints 5
+#define PointsImpulser 6
+#define PikachuImpulser 7 
+
+
+
+
+
 
 class ModuleGame : public Module
 {
