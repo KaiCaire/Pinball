@@ -199,7 +199,7 @@ b2PrismaticJoint* ModulePhysics::CreateSpring(/*int x, int y, int width, int hei
 	def.enableLimit = true;
 	def.localAxisA.Set(axis.x, axis.y);
 	def.enableMotor = true;
-	def.maxMotorForce = 700.0f;
+	def.maxMotorForce = 200.0f;
 
 	//create & add to world
 	b2PrismaticJoint* prismaticJoint = (b2PrismaticJoint*)world->CreateJoint(&def);
