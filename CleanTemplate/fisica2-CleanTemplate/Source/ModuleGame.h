@@ -21,17 +21,13 @@ class PalancaIzq;
 
 #define NoInteraction 1 
 
-
 #define LeftImpulser 2 
 #define RightImpulser 3 
 
 #define TopPoints 5
 #define PointsImpulser 6
 #define PikachuImpulser 7 
-
-
-
-
+#define SpringImpulser 8
 
 
 class ModuleGame : public Module
@@ -56,6 +52,7 @@ public:
 	int ballRad = 15;
 	Vector2 springForce = { 0.0f, -10.0f };
 	bool sensed;
+	bool canImpulse = false;
 
 	Board* rubyBoard;
 	Obstacle* rubyObstacle;

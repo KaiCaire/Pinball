@@ -182,7 +182,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 	return pbody;
 }
 
-b2PrismaticJoint* ModulePhysics::CreateSpring(int x, int y, int width, int height, PhysBody* bodyA, b2Vec2 axis) {
+b2PrismaticJoint* ModulePhysics::CreateSpring(/*int x, int y, int width, int height, */PhysBody* bodyA, PhysBody* bodyB, b2Vec2 axis) {
 
 	
 	//Create spring body A
@@ -190,15 +190,15 @@ b2PrismaticJoint* ModulePhysics::CreateSpring(int x, int y, int width, int heigh
 	/*bodyA = CreateRectangle(x, y, width*scale, height*scale, b2_dynamicBody, 0);*/
 
 	//Create spring body B
-	b2BodyDef springAnchorDef;
+	/*b2BodyDef springAnchorDef;
 	springAnchorDef.type = b2_staticBody;
-	springAnchorDef.position.Set(x * scale, (y - height )* scale);
-	b2Body* springAnchor = world->CreateBody(&springAnchorDef);
+	springAnchorDef.position.Set(x, (y - height ));
+	b2Body* springAnchor = world->CreateBody(&springAnchorDef);*/
 
 
 	//define prismatic joint
 	b2PrismaticJointDef def;
-	def.bodyA = springAnchor;
+	def.bodyA = bodyB->body;
 	def.bodyB = bodyA->body;
 	def.localAnchorA.Set(0, 0);
 	def.localAnchorB.Set(0, 0);
