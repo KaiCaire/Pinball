@@ -24,10 +24,13 @@ class PalancaIzq;
 #define LeftImpulser 2 
 #define RightImpulser 3 
 
-#define TopPoints 5
-#define PointsImpulser 6
+#define Points 5
+#define Impulser 6
 #define PikachuImpulser 7 
 #define SpringImpulser 8
+
+#define Dead 9
+
 
 
 class ModuleGame : public Module
@@ -44,8 +47,10 @@ public:
 public:
 
 	std::vector<PhysicEntity*> entities;
-
 	Music music;
+	Music pointsSFX;
+	Music deadSFX;
+
 
 	PhysBody* sensor;
 	Ball* ball;
@@ -73,4 +78,6 @@ public:
 	Vector2 initBallPos = { 243 * 2, 250 * 2 };
 
 	int cnt = 0;
+	bool dead = false;
+
 };

@@ -58,6 +58,14 @@ public:
 	void ShootBall(const b2Vec2& force) {
 		body->body->ApplyLinearImpulseToCenter(force, true);
 	}
+	void updatePosition()
+	{
+		b2Vec2 pos;
+		pos.x = 9.8;
+		pos.y = 10.0;
+
+		body->body->SetTransform(pos, 0.0f);
+	}
 
 
 private:
@@ -682,10 +690,20 @@ bool ModuleGame::Start()
 	palancaDer = new PalancaDer(App->physics, 285, 798, this, palancaderSheet);
 	palancaIzq = new PalancaIzq(App->physics, 198, 798, this, palancaizqSheet);
 
-	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, PointsImpulser);
-	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, TopPoints);
+
+	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
+	
+	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, Points); //Top points
+
+	sensor = App->physics->CreateRectangleSensor(390, 705, 80, 20, b2_staticBody, Points);  //Left points
+
+	sensor = App->physics->CreateRectangleSensor(90, 705, 80, 20, b2_staticBody, Points);   //Right points
+
+	sensor = App->physics->CreateRectangleSensor(242, 850, 82, 10, b2_staticBody, Dead);   //Dead
 
 	music = LoadMusicStream("Assets/Ruby/Music Tracks/RedTableTrack.mp3");
+	pointsSFX = LoadMusicStream("Assets/Ruby/Sounds/Another pling.WAV");
+	deadSFX = LoadMusicStream("Assets/Ruby/Sounds/DOOoo.WAV");
 
 	if (music.stream.buffer == NULL) // Verifica que se haya cargado correctamente
 	{
@@ -707,7 +725,15 @@ update_status ModuleGame::Update()
 {
 
 	UpdateMusicStream(music);
-	
+
+	UpdateMusicStream(pointsSFX);
+	pointsSFX.looping = false;
+
+	UpdateMusicStream(deadSFX);
+	deadSFX.looping = false;
+
+
+
 	if (IsKeyPressed(KEY_ONE))
 	{
 		entities.emplace_back(new Ball(App->physics, GetMouseX(), GetMouseY(), this, ballTex));
@@ -747,14 +773,13 @@ update_status ModuleGame::Update()
 		//eso seria el joint pero de momento no me va jkhfdshf
 		if (IsKeyPressed(KEY_SPACE)) {
 			// Apply a force to the plunger when the space key is pressed
-			b2Vec2 force(0.0f, -1.0f);
+			b2Vec2 force(0.0f, -0.8f);
 			ball->ShootBall(force);
 
 			canImpulse = false;
 		}
 	
 	}
-	
 
 	if (IsKeyPressed(KEY_RIGHT)) {
 		palancaDer->rotate = true;
@@ -776,6 +801,15 @@ update_status ModuleGame::Update()
 		printf("%d, %d, \n", GetMouseX(), GetMouseY());
 	}
 	
+
+	if (dead) {
+		ball->updatePosition();
+		PlayMusicStream(deadSFX);
+		dead = false;
+	}
+
+
+
 	pikachu->Update();
 	spoink->Update();
 	ball->Update();
@@ -785,31 +819,18 @@ update_status ModuleGame::Update()
 
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 {	
-	/*App->audio->PlayFx(bonus_fx);*/
 
 	b2Vec2 force(0.0f, 0.0f);
 
-	if (dir == SpringImpulser || dir == PikachuImpulser || dir == PointsImpulser) canImpulse = true;
+	if (dir == SpringImpulser || dir == PikachuImpulser || dir == Impulser) canImpulse = true;
 	
 	if (dir == LeftImpulser) force = { 0.4f, -0.9 };
 	else if (dir == RightImpulser) force = { -0.4f, -0.9f };
-
-	else if (dir == TopPoints) printf("puntos");
-	else if (dir == PointsImpulser) printf("puntos2");
-	else if (dir == PikachuImpulser) printf("puntos3");
-
-
-	//else if (dir == 3 && palancaIzq->x !=0)
-	//{
-	//	printf("izq");
-	//	force = {(float)palancaIzq->x/20, -0.5f};
-	//}
-	//else if (dir == 4 && palancaDer->x != 0)
-	//{
-	//	printf("der");
-	//	force = {-(float)palancaDer->x / 20, -0.5f };
-	//}
-
+	else if (dir == Points) {
+		printf("puntos");
+		PlayMusicStream(pointsSFX);
+	}
+	else if (dir == Dead) dead = true;
 
 	// Force to shoot the ball upwards
 	ball->ShootBall(force);
