@@ -738,17 +738,14 @@ update_status ModuleGame::Update()
 		else spoink->joint->SetMotorSpeed(0.0f);*/
 
 		//eso seria el joint pero de momento no me va jkhfdshf
-
-
 		if (IsKeyPressed(KEY_SPACE)) {
 			// Apply a force to the plunger when the space key is pressed
 			b2Vec2 force(0.0f, -1.0f);
 			ball->ShootBall(force);
 
 			canImpulse = false;
-
 		}
-		
+	
 	}
 	
 
@@ -781,14 +778,12 @@ update_status ModuleGame::Update()
 
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 {	
-	
 	/*App->audio->PlayFx(bonus_fx);*/
-	if (bodyA->id == SpringImpulser || bodyB->id == SpringImpulser) {
-		canImpulse = true;
-	}
-	
 
 	b2Vec2 force(0.0f, 0.0f);
+
+	if (dir == SpringImpulser || dir == PikachuImpulser || dir == PointsImpulser) canImpulse = true;
+	
 	if (dir == LeftImpulser) force = { 0.4f, -0.9 };
 	else if (dir == RightImpulser) force = { -0.4f, -0.9f };
 
