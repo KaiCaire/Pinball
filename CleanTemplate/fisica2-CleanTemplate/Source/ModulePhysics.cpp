@@ -203,15 +203,15 @@ b2PrismaticJoint* ModulePhysics::CreateSpring(/*int x, int y, int width, int hei
 	def.localAnchorA.Set(0, 0);
 	def.localAnchorB.Set(0, 0);
 	def.enableLimit = true;
-	def.upperTranslation = 10.0f; 
+	def.upperTranslation = 50.0f; 
 	def.lowerTranslation = -50.0f; // how far does the spring extend
 	def.localAxisA.Set(axis.x, axis.y);
 	def.enableMotor = true;
-	def.maxMotorForce = 10.0f;
-	def.motorSpeed = 0.0f;
+	def.maxMotorForce = 50.0f;
+	def.motorSpeed = 10.0f;
 	
 
-	
+	bodyA->body->SetGravityScale(1.0);
 	//create & add to world
 	b2PrismaticJoint* prismaticJoint = (b2PrismaticJoint*)world->CreateJoint(&def);
 

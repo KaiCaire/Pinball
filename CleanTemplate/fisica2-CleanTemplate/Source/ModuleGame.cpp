@@ -407,7 +407,7 @@ private:
 
 class Spring : public PhysicEntity {
 public:
-	b2Vec2 axis = { 0.0f, 0.0f };
+	b2Vec2 axis = { 0.0f, 1.0f };
 	b2PrismaticJoint* joint;
 	PhysBody* bodyA;
 	PhysBody* bodyB;
@@ -418,7 +418,7 @@ public:
 	{
 		
 		bodyA = this->body;
-		bodyB = physics->CreateRectangle(_x + 15, _y + 50, 40, 10, b2_staticBody, SpringImpulser);
+		bodyB = physics->CreateRectangle(_x + 15, _y + bodyA->height, 40, 10, b2_staticBody, SpringImpulser);
 		joint = physics->CreateSpring(bodyA, bodyB, axis);
 		
 	
@@ -677,7 +677,7 @@ bool ModuleGame::Start()
 	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
 	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
 
-	spoink = new Spring(App->physics, 472, 755, this, spoinkSheet);
+	spoink = new Spring(App->physics, 472, 775, this, spoinkSheet);
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 	palancaDer = new PalancaDer(App->physics, 285, 798, this, palancaderSheet);
 	palancaIzq = new PalancaIzq(App->physics, 198, 798, this, palancaizqSheet);
@@ -725,17 +725,24 @@ update_status ModuleGame::Update()
 		ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
 	}
 
+
+	
+
 	if (canImpulse) {
-		/*if (IsKeyPressed(KEY_DOWN))
+		
+		if (IsKeyPressed(KEY_DOWN))
 		{
-			spoink->joint->SetMotorSpeed(-2.0f);
+			spoink->joint->SetMotorSpeed(50.0f);
 		}
 		else if (IsKeyReleased(KEY_DOWN))
 		{
-			spoink->joint->SetMotorSpeed(5.0f);
-			
+			spoink->joint->SetMotorSpeed(-50.0f);
+		
+			/*canImpulse = false;*/
+
 		}
-		else spoink->joint->SetMotorSpeed(0.0f);*/
+		/*else spoink->joint->SetMotorSpeed(0.0f);*/
+		
 
 		//eso seria el joint pero de momento no me va jkhfdshf
 		if (IsKeyPressed(KEY_SPACE)) {
