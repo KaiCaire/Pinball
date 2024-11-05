@@ -407,12 +407,18 @@ private:
 
 class Spring : public PhysicEntity {
 public:
-	b2Vec2 axis = { 0.0f, -1.0f };
+	b2Vec2 axis = { 0.0f, 1.0f };
+	b2PrismaticJoint* joint;
+	PhysBody* bodyA;
 
-	Spring(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
-		: PhysicEntity(physics->CreateSpring(_x, _y, 20, 40, axis), _listener)
+	Spring(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture) 
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 40, 80, b2_dynamicBody, 1), _listener)
 		, texture(_texture)
 	{
+		
+		bodyA = this->body;
+		joint = physics->CreateSpring(_x, _y, 40, 80, bodyA, axis);
+	
 	}
 
 	void Update() override
@@ -433,6 +439,7 @@ public:
 
 private:
 	Texture2D texture;
+	
 };
 
 class Pikachu : public PhysicEntity
@@ -676,7 +683,19 @@ bool ModuleGame::Start()
 	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, 6);
 	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, 5);
 
+	music = LoadMusicStream("Assets/Ruby/Music Tracks/RedTableTrack.mp3");
 
+	if (music.stream.buffer == NULL) // Verifica que se haya cargado correctamente
+	{
+		LOG("Error loading music stream");
+		ret = false;
+	}
+	else
+	{
+		PlayMusicStream(music);
+	}
+
+	
 	return ret;
 }
 
@@ -685,7 +704,7 @@ bool ModuleGame::Start()
 update_status ModuleGame::Update()
 {
 
-	
+	UpdateMusicStream(music);
 	
 	if (IsKeyPressed(KEY_ONE))
 	{
@@ -705,10 +724,23 @@ update_status ModuleGame::Update()
 	}
 
 
-	if (IsKeyPressed(KEY_DOWN)) {
+	if (IsKeyPressed(KEY_DOWN)) 
+	{
+		spoink->joint->SetMotorSpeed(-2.0f);
+	} 
+	else if (IsKeyReleased(KEY_DOWN)) 
+	{
+		spoink->joint->SetMotorSpeed(5.0f);
+	} 
+	else spoink->joint->SetMotorSpeed(0.0f);
+	
+
+	
+	if (IsKeyPressed(KEY_SPACE)) {
 		// Apply a force to the plunger when the space key is pressed
-		b2Vec2 force(0.0f, -1.0f); // Force to shoot the ball upwards
+		b2Vec2 force(0.0f, -1.0f);
 		ball->ShootBall(force);
+
 	}
 
 	if (IsKeyPressed(KEY_RIGHT)) {
@@ -774,6 +806,10 @@ bool ModuleGame::CleanUp()
 	LOG("Unloading Intro scene");
 	UnloadTexture(emptyBoard);
 	UnloadTexture(ballTex);
+
+	StopMusicStream(music);
+	UnloadMusicStream(music);
+
 	delete ball;
 	delete rubyBoard;
 	delete spoink;

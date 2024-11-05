@@ -35,6 +35,8 @@ public:
 
 	std::vector<PhysicEntity*> entities;
 
+	Music music;
+
 	PhysBody* sensor;
 	Ball* ball;
 	int ballRad = 15;
