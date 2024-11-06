@@ -487,7 +487,7 @@ public:
 		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 	}
 
-private:
+public:
 	Texture2D texture;
 	
 };
@@ -728,6 +728,15 @@ bool ModuleGame::Start()
 	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
 
 	spoink = new Spring(App->physics, 472, 775, this, spoinkSheet);
+
+	//CARGAR FRAMES DE LA ANIMACIÓN
+	frames[0] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
+	frames[1] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_3.png");
+	frames[2] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_4.png");
+	frames[3] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_2.png");
+	frames[4] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
+
+
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 	palancaDer = new PalancaDer(App->physics, 285, 798, this, palancaderSheet);
 	palancaIzq = new PalancaIzq(App->physics, 198, 798, this, palancaizqSheet);
@@ -801,9 +810,25 @@ update_status ModuleGame::Update()
 			ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
 		}
 
+		// ANIMACION SPOINK
+		timer += GetFrameTime();
+		if (timer >= frameTime) {
+			timer = 0.0f;
+			currentFrame++;
+			if (currentFrame >= 5) currentFrame = 0; // Reinicia el ciclo
+		}
+		spoink->texture = frames[currentFrame];
+
 		if (canImpulse) {
 
-			if (IsKeyPressed(KEY_DOWN)) spoink->joint->SetMotorSpeed(-0.5f);
+			if (IsKeyPressed(KEY_DOWN)){
+
+				timer += GetFrameTime();
+
+
+
+				spoink->joint->SetMotorSpeed(-0.5f);
+			}
 
 			else if (IsKeyReleased(KEY_DOWN))
 			{

@@ -55,6 +55,10 @@ public:
 	Music pointsSFX;
 	Music deadSFX;
 
+	int currentFrame = 0;
+	float frameTime = 0.15f;   // Duración de cada frame en segundos
+	float timer = 0.0f;
+	Texture2D frames[8];
 
 	PhysBody* sensor;
 	PhysBody* sensorBlock;
