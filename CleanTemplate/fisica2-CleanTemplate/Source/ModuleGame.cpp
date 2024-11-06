@@ -645,7 +645,7 @@ public:
 
 		float rotation = body->GetRotation() * RAD2DEG;
 		b2Vec2 vel = { 0.0f,1.0f };
-		if (rotate) {
+		if (rotate) { 
 
 			if (x < 20) {
 				body->body->SetAngularVelocity(-4.5f);
@@ -822,11 +822,6 @@ update_status ModuleGame::Update()
 		if (canImpulse) {
 
 			if (IsKeyPressed(KEY_DOWN)){
-
-				timer += GetFrameTime();
-
-
-
 				spoink->joint->SetMotorSpeed(-0.5f);
 			}
 
