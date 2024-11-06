@@ -75,6 +75,7 @@ public:
 	Texture2D ballTex;
 	Texture2D palancaderSheet;
 	Texture2D palancaizqSheet;
+	Texture2D gameOver;
 
 	Spring* spoink;
 	Texture2D spoinkSheet;

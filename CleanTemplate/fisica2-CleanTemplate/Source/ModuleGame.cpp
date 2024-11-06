@@ -721,6 +721,8 @@ bool ModuleGame::Start()
 	palancaizqSheet = LoadTexture("Assets/Ruby/Left_Flipper.png");
 	palancaderSheet = LoadTexture("Assets/Ruby/Right_Flipper.png");
 	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
+	gameOver = LoadTexture("Assets/Ruby/GAME OVER.png");
+
 
 	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
 	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
@@ -852,35 +854,44 @@ update_status ModuleGame::Update()
 
 
 		sprintf_s(cadena, "%d", player.actualScore);
-		DrawTextEx(font, cadena, { 359, 810}, 40,0, WHITE);
+		DrawTextEx(font, cadena, { 410, 822}, 30,0, WHITE);
 
 		sprintf_s(cadena, "%d", player.bestScore);
-		DrawTextEx(font, cadena, { 90, 820 }, 25, 0, YELLOW);
-		DrawTextEx(font, "BEST:", { 30, 820 }, 25, 0, YELLOW);
+		DrawTextEx(font, cadena, { 410, 805 }, 25, 0, YELLOW);
+		DrawTextEx(font, "BEST:", { 360, 808 }, 20, 0, YELLOW);
 
-
-		pikachu->Update();
-		spoink->Update();
 		ball->Update();
 
 		break;
 	case State::DEAD:
-		printf("dead");
+		rubyBoard->Update();
+
+		DrawTexture(gameOver,40, 400, WHITE);
 		player.lifes = 3;
-		state = State::SCORE;
+		DrawTextEx(font, "PRESS SPACE TO CONTINUE", { 100, 440 }, 25, 0, BLACK);
+
+		if (IsKeyPressed(KEY_SPACE)) state = State::SCORE;
+	
+
 		break;
 	case State::SCORE:
 		if (player.actualScore > player.bestScore){
 			player.bestScore = player.actualScore;
 		}
+		
 
-		player.actualScore = 0;
-		state = State::INGAME;
+			player.actualScore = 0;
+			state = State::INGAME;
+		
 
 		break;
 	default:
 		break;
 	}
+
+
+	pikachu->Update();
+	spoink->Update();
 
 	return UPDATE_CONTINUE;
 }
