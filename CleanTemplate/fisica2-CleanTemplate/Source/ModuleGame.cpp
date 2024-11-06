@@ -183,6 +183,46 @@ private:
 	Texture2D texture;
 };
 
+class Block : public PhysicEntity
+{
+public:
+
+	static constexpr int board_limit[16] =
+	{
+		437, 284,
+		423, 253,
+		413, 237,
+		393, 206,
+		371, 182,
+		396, 200,
+		422, 236,
+		444, 274
+	};
+
+
+
+	Block(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, board_limit, 16, b2_staticBody, 1), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 2.0f, WHITE);
+	}
+	void changeColision(bool flag) {
+		body->body->SetEnabled(flag);
+	}
+
+private:
+	Texture2D texture;
+};
+
+
 class Obstacle : public PhysicEntity
 {
 public:
@@ -386,9 +426,6 @@ public:
 
 		CreateChain(physics, circuit9, sizeof(circuit9) / sizeof(circuit9[0]), _x, _y, RightImpulser);
 		CreateChain(physics, circuit19, sizeof(circuit19) / sizeof(circuit19[0]), _x, _y, NoInteraction);
-
-
-
 	}
 
 	void Update() override
@@ -413,6 +450,7 @@ private:
 		}
 	}
 };
+
 
 class Spring : public PhysicEntity {
 public:
@@ -690,9 +728,15 @@ bool ModuleGame::Start()
 	palancaDer = new PalancaDer(App->physics, 285, 798, this, palancaderSheet);
 	palancaIzq = new PalancaIzq(App->physics, 198, 798, this, palancaizqSheet);
 
+
 	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
 	
 	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, Points); //Top points
+
+	blocker = new Block(App->physics, 198, 798, this, emptyBoard);
+	blocker->changeColision(false);
+
+	sensorBlock = App->physics->CreateRectangleSensor(360, 200, 20, 50, b2_staticBody, 10);
 
 	sensor = App->physics->CreateRectangleSensor(390, 705, 80, 20, b2_staticBody, Points);  //Left points
 
@@ -738,8 +782,16 @@ update_status ModuleGame::Update()
 
 		rubyBoard->Update();
 		rubyObstacle->Update();
+
 		palancaDer->Update();
 		palancaIzq->Update();
+
+		if(start && !oneTime)
+		{ 
+			blocker->changeColision(true);
+			oneTime = true;
+			//blocker->Update();
+		}
 
 		if (ball == NULL) {
 			ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
@@ -785,9 +837,15 @@ update_status ModuleGame::Update()
 			ball->updatePosition();
 			PlayMusicStream(deadSFX);
 			player.lifes -= 1;
+			oneTime = false;
+			start = false;
+			blocker->changeColision(false);
 			dead = false;
 		}
-		
+		if (IsKeyPressed(KEY_A)) {
+			printf("%d, %d, \n", GetMouseX(), GetMouseY());
+		}
+
 		if(player.lifes == 0) state = State::DEAD;
 
 		pikachu->Update();
@@ -843,6 +901,8 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	if (dir == SpringImpulser) {
 		canImpulse = true;
 	}
+
+	if (dir == 10 && start == false) start = true;
 
 	// Force to shoot the ball
 	ball->ShootBall(force);

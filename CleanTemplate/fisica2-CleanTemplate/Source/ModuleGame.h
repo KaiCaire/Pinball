@@ -15,6 +15,9 @@ class Ball;
 class Obstacle;
 class Spring;
 class Pikachu;
+class Pikachu;
+
+class Block;
 
 class PalancaDer;
 class PalancaIzq;
@@ -54,6 +57,8 @@ public:
 
 
 	PhysBody* sensor;
+	PhysBody* sensorBlock;
+
 	Ball* ball;
 	int ballRad = 15;
 	Vector2 springForce = { 0.0f, -10.0f };
@@ -65,6 +70,7 @@ public:
 	Board* rubyBoard;
 	Obstacle* rubyObstacle;
 
+
 	Texture2D emptyBoard;
 	Texture2D ballTex;
 	Texture2D palancaderSheet;
@@ -75,6 +81,8 @@ public:
 	Pikachu* pikachu;
 	PalancaDer* palancaDer;
 	PalancaIzq* palancaIzq;
+
+	Block* blocker;
 
 	Texture2D pikachuSheet;
 
@@ -93,4 +101,7 @@ public:
 	}player;
 	 
 	State state;
+
+	bool start;
+	bool oneTime;
 };
