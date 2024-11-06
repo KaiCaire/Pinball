@@ -15,6 +15,9 @@ class Ball;
 class Obstacle;
 class Spring;
 class Pikachu;
+class Pikachu;
+
+class Block;
 
 class PalancaDer;
 class PalancaIzq;
@@ -56,13 +59,21 @@ public:
 	Music pointsSFX;
 	Music deadSFX;
 
+	int currentFrame = 0;
+	float frameTime = 0.15f;   // Duración de cada frame en segundos
+	float timer = 0.0f;
+	Texture2D frames[8];
 
 	PhysBody* sensor;
+	PhysBody* sensorBlock;
+
 	Ball* ball;
 	int ballRad = 15;
 	Vector2 springForce = { 0.0f, -10.0f };
 	bool sensed;
 	bool canImpulse = false;
+
+	bool basicImpulser;
 
 	float spoinkPos;
 
@@ -73,6 +84,7 @@ public:
 	Texture2D ballTex;
 	Texture2D palancaderSheet;
 	Texture2D palancaizqSheet;
+	Texture2D gameOver;
 
 	Spring* spoink;
 	Texture2D spoinkSheet;
@@ -81,6 +93,8 @@ public:
 	LeftFlipper* lFlip;
 	//PalancaDer* palancaDer;
 	//PalancaIzq* palancaIzq;
+
+	Block* blocker;
 
 	Texture2D pikachuSheet;
 
@@ -91,12 +105,15 @@ public:
 
 	struct PlayerStats {
 		int bestScore = 0;
-		int midScore = 0;
-		int worseScore = 0;
 		int actualScore = 0;
-
 		int lifes = 3;
 	}player;
 	 
 	State state;
+
+	Font font;
+	char cadena[20];
+
+	bool start;
+	bool oneTime;
 };

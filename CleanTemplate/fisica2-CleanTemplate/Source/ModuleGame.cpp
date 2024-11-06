@@ -183,6 +183,46 @@ private:
 	Texture2D texture;
 };
 
+class Block : public PhysicEntity
+{
+public:
+
+	static constexpr int board_limit[16] =
+	{
+		437, 284,
+		423, 253,
+		413, 237,
+		393, 206,
+		371, 182,
+		396, 200,
+		422, 236,
+		444, 274
+	};
+
+
+
+	Block(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, board_limit, 16, b2_staticBody, 1), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 2.0f, WHITE);
+	}
+	void changeColision(bool flag) {
+		body->body->SetEnabled(flag);
+	}
+
+private:
+	Texture2D texture;
+};
+
+
 class Obstacle : public PhysicEntity
 {
 public:
@@ -386,9 +426,6 @@ public:
 
 		CreateChain(physics, circuit9, sizeof(circuit9) / sizeof(circuit9[0]), _x, _y, RightImpulser);
 		CreateChain(physics, circuit19, sizeof(circuit19) / sizeof(circuit19[0]), _x, _y, NoInteraction);
-
-
-
 	}
 
 	void Update() override
@@ -413,6 +450,7 @@ private:
 		}
 	}
 };
+
 
 class Spring : public PhysicEntity {
 public:
@@ -449,7 +487,7 @@ public:
 		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 	}
 
-private:
+public:
 	Texture2D texture;
 	
 };
@@ -787,6 +825,85 @@ private:
 	}
 };
 
+
+//class PalancaIzq : public PhysicEntity
+//{
+//public:
+//	PalancaIzq(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
+//		: PhysicEntity(physics->CreateRectangle(_x, _y, 58, 20, b2_kinematicBody, 1), _listener), texture(_texture)
+//	{
+//		// Initialize the bounding box based on the texture
+//		width = 32;
+//		height = 16;
+//	}
+//	bool rotate = false;
+//	int x = 7;
+//
+//	void Update() override
+//	{
+//		Vector2 position = GetColliderPosition();
+//		float scale = 2.0f;
+//
+//		Rectangle source = { 0.0f, 0.0f, (float)width, (float)texture.height };
+//		Rectangle dest = { position.x, position.y - (texture.height / 1.5f), width * scale, (float)texture.height * scale };
+//
+//		Vector2 origin = GetTextureOrigin(); // Updated method to get the origin
+//
+//		float rotation = body->GetRotation() * RAD2DEG;
+//		b2Vec2 vel = { 0.0f,1.0f };
+//		if (rotate) { 
+//
+//			if (x < 20) {
+//				body->body->SetAngularVelocity(-4.5f);
+//				vel = { -0.4f,-1.1f };
+//				x++;
+//			}
+//			else {
+//				body->body->SetAngularVelocity(0.0f);
+//				vel = { 0.0f,0.0f };
+//			}
+//			body->body->SetLinearVelocity(vel);
+//		}
+//		else if (x != 0)
+//		{
+//			body->body->SetAngularVelocity(4.5f);
+//			x--;
+//			vel = { 0.4f,1.1f };
+//			body->body->SetLinearVelocity(vel);
+//		}
+//		else {
+//			body->body->SetAngularVelocity(0.0f);
+//			vel = { 0.0f,0.0f };
+//
+//			body->body->SetLinearVelocity(vel);
+//		}
+//		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
+//	}
+//
+//	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
+//	{
+//		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
+//	}
+//
+//private:
+//	Texture2D texture;
+//	int width;
+//	int height;
+//
+//	Vector2 GetColliderPosition() const
+//	{
+//		int x, y;
+//		body->GetPhysicPosition(x, y);
+//		return { (float)x, (float)y };
+//	}
+//
+//	Vector2 GetTextureOrigin() const
+//	{
+//		// Adjust origin based on width and height to center the texture correctly
+//		return { (float)(width), (float)(texture.height / 2) };
+//	}
+//};
+
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 
@@ -801,26 +918,45 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
+	font = LoadFont("Assets/Ruby/Tiny5-Regular.ttf");
+
 	emptyBoard = LoadTexture("Assets/Ruby/bg+mart.png");
 	spoinkSheet = LoadTexture("Assets/Ruby/spoink_sheet.png");
 	pikachuSheet = LoadTexture("Assets/Ruby/pikachu_sheet.png");
 	palancaizqSheet = LoadTexture("Assets/Ruby/Left_Flipper.png");
 	palancaderSheet = LoadTexture("Assets/Ruby/Right_Flipper.png");
 	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
+	gameOver = LoadTexture("Assets/Ruby/GAME OVER.png");
+
 
 	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
 	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
 
 	spoink = new Spring(App->physics, 472, 775, this, spoinkSheet);
+
+	//CARGAR FRAMES DE LA ANIMACIÓN
+	frames[0] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
+	frames[1] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_3.png");
+	frames[2] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_4.png");
+	frames[3] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_2.png");
+	frames[4] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
+
+
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 	/*palancaDer = new PalancaDer(App->physics, 285, 798, this, palancaderSheet);
 	palancaIzq = new PalancaIzq(App->physics, 198, 798, this, palancaizqSheet);*/
 	rFlip = new RightFlipper(App->physics, 280, 790, this, palancaderSheet);
 	lFlip = new LeftFlipper(App->physics, 200, 790, this, palancaizqSheet);
 
+
 	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
 	
 	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, Points); //Top points
+
+	blocker = new Block(App->physics, 198, 798, this, emptyBoard);
+	blocker->changeColision(false);
+
+	sensorBlock = App->physics->CreateRectangleSensor(360, 200, 20, 50, b2_staticBody, 10);
 
 	sensor = App->physics->CreateRectangleSensor(390, 705, 80, 20, b2_staticBody, Points);  //Left points
 
@@ -866,31 +1002,55 @@ update_status ModuleGame::Update()
 
 		rubyBoard->Update();
 		rubyObstacle->Update();
-	    /*palancaDer->Update();
-		palancaIzq->Update();*/
+
+
 		
 		
+
+
+		if(start && !oneTime)
+		{ 
+			blocker->changeColision(true);
+			oneTime = true;
+			//blocker->Update();
+		}
+
 
 		if (ball == NULL) {
 			ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
 		}
 
+		// ANIMACION SPOINK
+		timer += GetFrameTime();
+		if (timer >= frameTime) {
+			timer = 0.0f;
+			currentFrame++;
+			if (currentFrame >= 5) currentFrame = 0; // Reinicia el ciclo
+		}
+		spoink->texture = frames[currentFrame];
+
 		if (canImpulse) {
-
-			if (IsKeyPressed(KEY_DOWN)) spoink->joint->SetMotorSpeed(-0.5f);
-
-			else if (IsKeyReleased(KEY_DOWN))
+			if (basicImpulser)
 			{
-				spoink->joint->SetMotorSpeed(200.0f);
-				canImpulse = false;
+				if (IsKeyReleased(KEY_DOWN)) {
+					// Apply a force to the plunger when the space key is pressed
+					b2Vec2 force(0.0f, -0.7f);
+					ball->ShootBall(force);
+					canImpulse = false;
+					basicImpulser = false;
+				}
 			}
+			else
+			{
+				if (IsKeyPressed(KEY_DOWN)){
+					spoink->joint->SetMotorSpeed(-0.5f);
+				}
 
-			if (IsKeyPressed(KEY_SPACE)) {
-				// Apply a force to the plunger when the space key is pressed
-				b2Vec2 force(0.0f, -0.8f);
-				ball->ShootBall(force);
-
-				canImpulse = false;
+				else if (IsKeyReleased(KEY_DOWN))
+				{
+					spoink->joint->SetMotorSpeed(200.0f);
+					canImpulse = false;
+				}
 			}
 		}
 
@@ -936,9 +1096,15 @@ update_status ModuleGame::Update()
 			ball->updatePosition();
 			PlayMusicStream(deadSFX);
 			player.lifes -= 1;
+			oneTime = false;
+			start = false;
+			blocker->changeColision(false);
 			dead = false;
 		}
-		
+		if (IsKeyPressed(KEY_A)) {
+			printf("%d, %d, \n", GetMouseX(), GetMouseY());
+		}
+
 		if(player.lifes == 0) state = State::DEAD;
 
 
@@ -946,36 +1112,56 @@ update_status ModuleGame::Update()
 		lFlip->Update();
 		pikachu->Update();
 		spoink->Update();
+
+		sprintf_s(cadena, "%d", player.actualScore);
+		DrawTextEx(font, cadena, { 410, 822}, 30,0, WHITE);
+
+		sprintf_s(cadena, "%d", player.bestScore);
+		DrawTextEx(font, cadena, { 410, 805 }, 25, 0, YELLOW);
+		DrawTextEx(font, "BEST:", { 360, 808 }, 20, 0, YELLOW);
+
 		ball->Update();
 
 		break;
 	case State::DEAD:
-		printf("dead");
-		player.lifes = 3;
-		state = State::SCORE;
+		rubyBoard->Update();
+
+		DrawTexture(gameOver,40, 400, WHITE);
+
+		if (cnt >= 20) {
+			DrawTextEx(font, "PRESS SPACE TO CONTINUE", { 100, 440 }, 25, 0, BLACK);
+		}
+		if (cnt >= 80) cnt = 0;
+		cnt++;
+
+		if (IsKeyPressed(KEY_SPACE)){
+			state = State::SCORE;
+			player.lifes = 3;
+			cnt = 0;
+		}
+
 		break;
 	case State::SCORE:
 		if (player.actualScore > player.bestScore){
-			player.worseScore = player.midScore;
-			player.midScore = player.bestScore;
 			player.bestScore = player.actualScore;
 		}
-		else if (player.actualScore > player.midScore){
-			player.worseScore = player.midScore;
-			player.midScore = player.actualScore;
-		}
-		else if (player.actualScore > player.worseScore){
-			player.worseScore = player.actualScore;
-		}
-
-		printf("Score: \n BEST SCORE: %d \n MID SCORE: %d \n WORSE SCORE: %d ", player.bestScore, player.midScore, player.worseScore);
+	
 		player.actualScore = 0;
 		state = State::INGAME;
-
 		break;
 	default:
 		break;
 	}
+
+	DrawTexture(ballTex, 60, 825, WHITE);
+	sprintf_s(cadena, "%d", player.lifes);
+	DrawTextEx(font, cadena, { 80, 820 }, 25, 0, WHITE);
+
+	//palancaDer->Update();
+	//palancaIzq->Update();
+
+	pikachu->Update();
+	spoink->Update();
 
 	return UPDATE_CONTINUE;
 }
@@ -984,8 +1170,12 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 {	
 	b2Vec2 force(0.0f, 0.0f);
 
-	if (dir == SpringImpulser || dir == PikachuImpulser || dir == Impulser) canImpulse = true;
-	
+	if (dir == SpringImpulser || dir == PikachuImpulser || dir == Impulser){
+		canImpulse = true;
+		if (dir == PikachuImpulser || dir == Impulser) basicImpulser = true;
+
+	}
+
 	if (dir == LeftImpulser) force = { 0.4f, -0.9f };
 	else if (dir == RightImpulser) force = { -0.4f, -0.9f };
 	else if (dir == Points) {
@@ -997,6 +1187,8 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	if (dir == SpringImpulser) {
 		canImpulse = true;
 	}
+
+	if (dir == 10 && start == false) start = true;
 
 	// Force to shoot the ball
 	ball->ShootBall(force);
