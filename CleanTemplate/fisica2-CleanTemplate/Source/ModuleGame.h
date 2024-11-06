@@ -44,6 +44,7 @@ public:
 	bool CleanUp();
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir);
 
+	enum State{INGAME, DEAD, SCORE};
 public:
 
 	std::vector<PhysicEntity*> entities;
@@ -58,6 +59,8 @@ public:
 	Vector2 springForce = { 0.0f, -10.0f };
 	bool sensed;
 	bool canImpulse = false;
+
+	float spoinkPos;
 
 	Board* rubyBoard;
 	Obstacle* rubyObstacle;
@@ -80,4 +83,14 @@ public:
 	int cnt = 0;
 	bool dead = false;
 
+	struct PlayerStats {
+		int bestScore = 0;
+		int midScore = 0;
+		int worseScore = 0;
+		int actualScore = 0;
+
+		int lifes = 3;
+	}player;
+	 
+	State state;
 };

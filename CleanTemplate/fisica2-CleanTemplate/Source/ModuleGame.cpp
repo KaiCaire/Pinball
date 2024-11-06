@@ -591,7 +591,6 @@ public:
 		// Initialize the bounding box based on the texture
 		width = 32;
 		height = 16;
-
 	}
 	bool rotate = false;
 	int x = 7;
@@ -691,7 +690,6 @@ bool ModuleGame::Start()
 	palancaDer = new PalancaDer(App->physics, 285, 798, this, palancaderSheet);
 	palancaIzq = new PalancaIzq(App->physics, 198, 798, this, palancaizqSheet);
 
-
 	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
 	
 	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, Points); //Top points
@@ -715,8 +713,10 @@ bool ModuleGame::Start()
 	{
 		PlayMusicStream(music);
 	}
-
 	
+	state = State::INGAME;
+
+
 	return ret;
 }
 
@@ -724,135 +724,128 @@ bool ModuleGame::Start()
 // Update: draw background
 update_status ModuleGame::Update()
 {
-
-	UpdateMusicStream(music);
-
-	UpdateMusicStream(pointsSFX);
-	pointsSFX.looping = false;
-
-	UpdateMusicStream(deadSFX);
-	deadSFX.looping = false;
-
-
-
-	if (IsKeyPressed(KEY_ONE))
+	switch (state)
 	{
-		ball = new Ball(App->physics, GetMouseX(), GetMouseY(), this, ballTex);	
-	}
-	
-	rubyBoard->Update();
-	rubyObstacle->Update();
-	palancaDer->Update();
-	palancaIzq->Update();
-	
-
-
-	if (ball == NULL) {
-		ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
-	}
-
-
-	
-
-	if (canImpulse) {
+	case State::INGAME:
 		
-		if (IsKeyPressed(KEY_DOWN))
-		{
-			
-			spoink->joint->SetMotorSpeed(-0.5f);
-			
+		UpdateMusicStream(music);
+
+		UpdateMusicStream(pointsSFX);
+		pointsSFX.looping = false;
+
+		UpdateMusicStream(deadSFX);
+		deadSFX.looping = false;
+
+		rubyBoard->Update();
+		rubyObstacle->Update();
+		palancaDer->Update();
+		palancaIzq->Update();
+
+		if (ball == NULL) {
+			ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
 		}
-		else if (IsKeyReleased(KEY_DOWN))
-		{
-			
-			spoink->joint->SetMotorSpeed(200.0f);
-			
-			canImpulse = false;
+
+		if (canImpulse) {
+
+			if (IsKeyPressed(KEY_DOWN)) spoink->joint->SetMotorSpeed(-0.5f);
+
+			else if (IsKeyReleased(KEY_DOWN))
+			{
+				spoink->joint->SetMotorSpeed(200.0f);
+				canImpulse = false;
+			}
+
+			if (IsKeyPressed(KEY_SPACE)) {
+				// Apply a force to the plunger when the space key is pressed
+				b2Vec2 force(0.0f, -0.8f);
+				ball->ShootBall(force);
+
+				canImpulse = false;
+			}
 		}
-				
 
-	
-		if (IsKeyPressed(KEY_SPACE)) {
-			// Apply a force to the plunger when the space key is pressed
-			b2Vec2 force(0.0f, -0.8f);
-			ball->ShootBall(force);
+		spoinkPos = spoink->joint->GetJointTranslation();
 
-			canImpulse = false;
+		if (spoinkPos >= spoink->joint->GetUpperLimit() - 0.001f) {
+			// Joint has reached or is very close to the upper limit
+			spoink->joint->SetMotorSpeed(-0.2f);  // Move it back down
 		}
-	
+		else if (spoinkPos <= spoink->joint->GetLowerLimit() + 0.001f) {
+			// Joint has reached or is very close to the lower limit
+			spoink->joint->SetMotorSpeed(0.0f);  // Stop at the bottom
+		}
+
+		if (IsKeyPressed(KEY_RIGHT)) palancaDer->rotate = true;
+		else if (IsKeyReleased(KEY_RIGHT)) palancaDer->rotate = false;
+
+		if (IsKeyPressed(KEY_LEFT)) palancaIzq->rotate = true;
+		else if (IsKeyReleased(KEY_LEFT)) palancaIzq->rotate = false;
+
+		if (dead) {
+			ball->updatePosition();
+			PlayMusicStream(deadSFX);
+			player.lifes -= 1;
+			dead = false;
+		}
+		
+		if(player.lifes == 0) state = State::DEAD;
+
+		pikachu->Update();
+		spoink->Update();
+		ball->Update();
+
+		break;
+	case State::DEAD:
+		printf("dead");
+		player.lifes = 3;
+		state = State::SCORE;
+		break;
+	case State::SCORE:
+		if (player.actualScore > player.bestScore){
+			player.worseScore = player.midScore;
+			player.midScore = player.bestScore;
+			player.bestScore = player.actualScore;
+		}
+		else if (player.actualScore > player.midScore){
+			player.worseScore = player.midScore;
+			player.midScore = player.actualScore;
+		}
+		else if (player.actualScore > player.worseScore){
+			player.worseScore = player.actualScore;
+		}
+
+		printf("Score: \n BEST SCORE: %d \n MID SCORE: %d \n WORSE SCORE: %d ", player.bestScore, player.midScore, player.worseScore);
+		player.actualScore = 0;
+		state = State::INGAME;
+
+		break;
+	default:
+		break;
 	}
-
-
-	float spoinkPos = spoink->joint->GetJointTranslation();
-
-	if (spoinkPos >= spoink->joint->GetUpperLimit() -0.001f) {
-		// Joint has reached or is very close to the upper limit
-		spoink->joint->SetMotorSpeed(-0.2f);  // Move it back down
-	}
-	else if (spoinkPos <= spoink->joint->GetLowerLimit() + 0.001f) {
-		// Joint has reached or is very close to the lower limit
-		spoink->joint->SetMotorSpeed(0.0f);  // Stop at the bottom
-	}
-
-
-	if (IsKeyPressed(KEY_RIGHT)) {
-		palancaDer->rotate = true;
-	}
-	else if (IsKeyReleased(KEY_RIGHT))
-	{
-		palancaDer->rotate = false;
-	}
-
-	if (IsKeyPressed(KEY_LEFT)) {
-		palancaIzq->rotate = true;
-	}
-	else if (IsKeyReleased(KEY_LEFT))
-	{
-		palancaIzq->rotate = false;
-	}
-
-	if (IsKeyPressed(KEY_A)) {
-		printf("%d, %d, \n", GetMouseX(), GetMouseY());
-	}
-	
-
-	if (dead) {
-		ball->updatePosition();
-		PlayMusicStream(deadSFX);
-		dead = false;
-	}
-
-
-
-	pikachu->Update();
-	spoink->Update();
-	ball->Update();
 
 	return UPDATE_CONTINUE;
 }
 
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 {	
-
 	b2Vec2 force(0.0f, 0.0f);
 
 	if (dir == SpringImpulser || dir == PikachuImpulser || dir == Impulser) canImpulse = true;
 	
-	if (dir == LeftImpulser) force = { 0.4f, -0.9 };
+	if (dir == LeftImpulser) force = { 0.4f, -0.9f };
 	else if (dir == RightImpulser) force = { -0.4f, -0.9f };
 	else if (dir == Points) {
-		printf("puntos");
+		player.actualScore += 100;
 		PlayMusicStream(pointsSFX);
 	}
 	else if (dir == Dead) dead = true;
 
-	if (bodyA->id == SpringImpulser || bodyB->id == SpringImpulser) {
+	if (dir == SpringImpulser) {
 		canImpulse = true;
 	}
 
-
-	// Force to shoot the ball upwards
-	/*ball->ShootBall(force);*/
+	// Force to shoot the ball
+	ball->ShootBall(force);
 }
 
 // Load assets
