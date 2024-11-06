@@ -93,14 +93,15 @@ public:
 
 	struct PlayerStats {
 		int bestScore = 0;
-		int midScore = 0;
-		int worseScore = 0;
 		int actualScore = 0;
 
 		int lifes = 3;
 	}player;
 	 
 	State state;
+
+	Font font;
+	char cadena[20];
 
 	bool start;
 	bool oneTime;

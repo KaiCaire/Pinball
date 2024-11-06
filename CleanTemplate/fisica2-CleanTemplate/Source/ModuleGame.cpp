@@ -713,6 +713,8 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
+	font = LoadFont("Assets/Ruby/Tiny5-Regular.ttf");
+
 	emptyBoard = LoadTexture("Assets/Ruby/bg+mart.png");
 	spoinkSheet = LoadTexture("Assets/Ruby/spoink_sheet.png");
 	pikachuSheet = LoadTexture("Assets/Ruby/pikachu_sheet.png");
@@ -848,6 +850,15 @@ update_status ModuleGame::Update()
 
 		if(player.lifes == 0) state = State::DEAD;
 
+
+		sprintf_s(cadena, "%d", player.actualScore);
+		DrawTextEx(font, cadena, { 359, 810}, 40,0, WHITE);
+
+		sprintf_s(cadena, "%d", player.bestScore);
+		DrawTextEx(font, cadena, { 90, 820 }, 25, 0, YELLOW);
+		DrawTextEx(font, "BEST:", { 30, 820 }, 25, 0, YELLOW);
+
+
 		pikachu->Update();
 		spoink->Update();
 		ball->Update();
@@ -860,19 +871,9 @@ update_status ModuleGame::Update()
 		break;
 	case State::SCORE:
 		if (player.actualScore > player.bestScore){
-			player.worseScore = player.midScore;
-			player.midScore = player.bestScore;
 			player.bestScore = player.actualScore;
 		}
-		else if (player.actualScore > player.midScore){
-			player.worseScore = player.midScore;
-			player.midScore = player.actualScore;
-		}
-		else if (player.actualScore > player.worseScore){
-			player.worseScore = player.actualScore;
-		}
 
-		printf("Score: \n BEST SCORE: %d \n MID SCORE: %d \n WORSE SCORE: %d ", player.bestScore, player.midScore, player.worseScore);
 		player.actualScore = 0;
 		state = State::INGAME;
 
