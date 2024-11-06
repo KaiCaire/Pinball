@@ -69,11 +69,12 @@ public:
 	bool sensed;
 	bool canImpulse = false;
 
+	bool basicImpulser;
+
 	float spoinkPos;
 
 	Board* rubyBoard;
 	Obstacle* rubyObstacle;
-
 
 	Texture2D emptyBoard;
 	Texture2D ballTex;
@@ -99,7 +100,6 @@ public:
 	struct PlayerStats {
 		int bestScore = 0;
 		int actualScore = 0;
-
 		int lifes = 3;
 	}player;
 	 

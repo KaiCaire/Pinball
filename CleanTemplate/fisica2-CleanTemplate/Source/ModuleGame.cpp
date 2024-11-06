@@ -796,9 +796,6 @@ update_status ModuleGame::Update()
 		rubyBoard->Update();
 		rubyObstacle->Update();
 
-		palancaDer->Update();
-		palancaIzq->Update();
-
 		if(start && !oneTime)
 		{ 
 			blocker->changeColision(true);
@@ -820,23 +817,27 @@ update_status ModuleGame::Update()
 		spoink->texture = frames[currentFrame];
 
 		if (canImpulse) {
-
-			if (IsKeyPressed(KEY_DOWN)){
-				spoink->joint->SetMotorSpeed(-0.5f);
-			}
-
-			else if (IsKeyReleased(KEY_DOWN))
+			if (basicImpulser)
 			{
-				spoink->joint->SetMotorSpeed(200.0f);
-				canImpulse = false;
+				if (IsKeyReleased(KEY_DOWN)) {
+					// Apply a force to the plunger when the space key is pressed
+					b2Vec2 force(0.0f, -0.7f);
+					ball->ShootBall(force);
+					canImpulse = false;
+					basicImpulser = false;
+				}
 			}
+			else
+			{
+				if (IsKeyPressed(KEY_DOWN)){
+					spoink->joint->SetMotorSpeed(-0.5f);
+				}
 
-			if (IsKeyPressed(KEY_SPACE)) {
-				// Apply a force to the plunger when the space key is pressed
-				b2Vec2 force(0.0f, -0.8f);
-				ball->ShootBall(force);
-
-				canImpulse = false;
+				else if (IsKeyReleased(KEY_DOWN))
+				{
+					spoink->joint->SetMotorSpeed(200.0f);
+					canImpulse = false;
+				}
 			}
 		}
 
@@ -887,28 +888,38 @@ update_status ModuleGame::Update()
 		rubyBoard->Update();
 
 		DrawTexture(gameOver,40, 400, WHITE);
-		player.lifes = 3;
-		DrawTextEx(font, "PRESS SPACE TO CONTINUE", { 100, 440 }, 25, 0, BLACK);
 
-		if (IsKeyPressed(KEY_SPACE)) state = State::SCORE;
-	
+		if (cnt >= 20) {
+			DrawTextEx(font, "PRESS SPACE TO CONTINUE", { 100, 440 }, 25, 0, BLACK);
+		}
+		if (cnt >= 80) cnt = 0;
+		cnt++;
+
+		if (IsKeyPressed(KEY_SPACE)){
+			state = State::SCORE;
+			player.lifes = 3;
+			cnt = 0;
+		}
 
 		break;
 	case State::SCORE:
 		if (player.actualScore > player.bestScore){
 			player.bestScore = player.actualScore;
 		}
-		
-
-			player.actualScore = 0;
-			state = State::INGAME;
-		
-
+	
+		player.actualScore = 0;
+		state = State::INGAME;
 		break;
 	default:
 		break;
 	}
 
+	DrawTexture(ballTex, 60, 825, WHITE);
+	sprintf_s(cadena, "%d", player.lifes);
+	DrawTextEx(font, cadena, { 80, 820 }, 25, 0, WHITE);
+
+	palancaDer->Update();
+	palancaIzq->Update();
 
 	pikachu->Update();
 	spoink->Update();
@@ -920,8 +931,12 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 {	
 	b2Vec2 force(0.0f, 0.0f);
 
-	if (dir == SpringImpulser || dir == PikachuImpulser || dir == Impulser) canImpulse = true;
-	
+	if (dir == SpringImpulser || dir == PikachuImpulser || dir == Impulser){
+		canImpulse = true;
+		if (dir == PikachuImpulser || dir == Impulser) basicImpulser = true;
+
+	}
+
 	if (dir == LeftImpulser) force = { 0.4f, -0.9f };
 	else if (dir == RightImpulser) force = { -0.4f, -0.9f };
 	else if (dir == Points) {
