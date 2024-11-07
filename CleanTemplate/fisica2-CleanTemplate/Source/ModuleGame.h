@@ -59,6 +59,7 @@ public:
 	Sound gameOverMusic;
 	Sound pointsSFX;
 	Sound deadSFX;
+	unsigned int flipperFX = -1;
 
 	/*Music pointsSFX;
 	Music deadSFX;*/

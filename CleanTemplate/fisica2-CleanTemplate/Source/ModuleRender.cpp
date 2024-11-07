@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "ModulePhysics.h"
 #include <math.h>
 
 ModuleRender::ModuleRender(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -45,7 +46,10 @@ update_status ModuleRender::Update()
 update_status ModuleRender::PostUpdate()
 {
     // Draw everything in our batch!
-    DrawFPS(10, 10);
+    if (App->physics->debug) {
+       DrawFPS(10, 10);
+    }
+    
 
     EndDrawing();
 

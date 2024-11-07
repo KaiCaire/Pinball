@@ -736,6 +736,8 @@ bool ModuleGame::Start()
 	pointsSFX = LoadSound("Assets/Ruby/Sounds/Another pling.WAV");
 	deadSFX = LoadSound("Assets/Ruby/Sounds/DOOoo.WAV");
 
+	flipperFX = App->audio->LoadFx("Assets/Ruby/Sounds/flipperFX.mp3");
+
 	if (music.stream.buffer == NULL) // Verifica que se haya cargado correctamente
 	{
 		LOG("Error loading music stream");
@@ -840,6 +842,9 @@ update_status ModuleGame::Update()
 			}
 		}
 
+
+		//spring movement
+
 		spoinkPos = spoink->joint->GetJointTranslation();
 
 		if (spoinkPos >= spoink->joint->GetUpperLimit() - 0.001f) {
@@ -851,19 +856,23 @@ update_status ModuleGame::Update()
 			spoink->joint->SetMotorSpeed(0.0f);  // Stop at the bottom
 		}
 
-		if (IsKeyDown(KEY_RIGHT)) {
+		//flipper movement
+
+		if (IsKeyPressed(KEY_RIGHT)) {
+			App->audio->PlayFx(flipperFX);
 			//The revolute joint angle is positive when its body rotates CCW about the angle point.
 			pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
-
 			rFlip->revJoint->SetMotorSpeed(-4.0f);
+			
 		}
 		else if (IsKeyReleased(KEY_RIGHT)) {
 			rFlip->revJoint->SetMotorSpeed(4.0f);
+			
 		}
 
-		if (IsKeyDown(KEY_LEFT)) {
+		if (IsKeyPressed(KEY_LEFT)) {
+			App->audio->PlayFx(flipperFX);
 			pikachu = new Pikachu(App->physics, 66, 775, this, pikachuSheet);
-
 			lFlip->revJoint->SetMotorSpeed(4.0f);
 		}
 		else if (IsKeyReleased(KEY_LEFT)) {
@@ -872,7 +881,7 @@ update_status ModuleGame::Update()
 
 		if (dead) {
 			ball->updatePosition();
-			/*PlayMusicStream(deadSFX);*/
+			
 			PlaySound(deadSFX);
 			player.lifes -= 1;
 			oneTime = false;
@@ -889,6 +898,8 @@ update_status ModuleGame::Update()
 			PlaySound(gameOverMusic);
 			state = State::DEAD;
 		}
+
+		
 
 		pikachu->Update();
 		spoink->Update();
@@ -966,7 +977,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	else if (dir == RightImpulser) force = { -0.4f, -0.9f };
 	else if (dir == Points) {
 		player.actualScore += 100;
-		/*PlayMusicStream(pointsSFX);*/
+		
 		PlaySound(pointsSFX);
 	}
 	else if (dir == Dead) dead = true;
