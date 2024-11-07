@@ -698,6 +698,7 @@ bool ModuleGame::Start()
 	frames[5] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_1.png");
 	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_2.png");
 	frames[7] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_3.png");
+	
 
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 	rFlip = new RightFlipper(App->physics, 280, 790, this, palancaderSheet);
@@ -720,9 +721,12 @@ bool ModuleGame::Start()
 	sensor = App->physics->CreateRectangleSensor(242, 850, 82, 10, b2_staticBody, Dead);   //Dead
 
 	music = LoadMusicStream("Assets/Ruby/Music Tracks/RedTableTrack.mp3");
-	pointsSFX = LoadMusicStream("Assets/Ruby/Sounds/Another pling.WAV");
-	deadSFX = LoadMusicStream("Assets/Ruby/Sounds/DOOoo.WAV");
+	gameOverMusic = LoadSound("Assets/Ruby/Music Tracks/Game Over.mp3");
+	/*gameOverMusic.looping = false;*/
 
+	pointsSFX = LoadSound("Assets/Ruby/Sounds/Another pling.WAV");
+	deadSFX = LoadSound("Assets/Ruby/Sounds/DOOoo.WAV");
+	
 	if (music.stream.buffer == NULL) // Verifica que se haya cargado correctamente
 	{
 		LOG("Error loading music stream");
@@ -732,6 +736,13 @@ bool ModuleGame::Start()
 	{
 		PlayMusicStream(music);
 	}
+
+	if (gameOverMusic.stream.buffer == NULL) // Verifica que se haya cargado correctamente
+	{
+		LOG("Error loading gameOverMusic stream");
+		ret = false;
+	}
+	
 	
 	state = State::INGAME;
 
@@ -747,13 +758,10 @@ update_status ModuleGame::Update()
 	{
 	case State::INGAME:
 		
-		UpdateMusicStream(music);
-
-		UpdateMusicStream(pointsSFX);
-		pointsSFX.looping = false;
-
-		UpdateMusicStream(deadSFX);
-		deadSFX.looping = false;
+		
+		
+		
+		
 
 		rubyBoard->Update();
 		rubyObstacle->Update();
@@ -844,7 +852,10 @@ update_status ModuleGame::Update()
 
 		if (dead) {
 			ball->updatePosition();
-			PlayMusicStream(deadSFX);
+			
+			PlaySound(deadSFX);
+			
+
 			player.lifes -= 1;
 			oneTime = false;
 			start = false;
@@ -855,7 +866,11 @@ update_status ModuleGame::Update()
 			printf("%d, %d, \n", GetMouseX(), GetMouseY());
 		}
 
-		if(player.lifes == 0) state = State::DEAD;
+		if (player.lifes == 0) {
+			StopMusicStream(music);
+			PlaySound(gameOverMusic);
+			state = State::DEAD;
+		}
 
 		pikachu->Update();
 		spoink->Update();
@@ -867,11 +882,16 @@ update_status ModuleGame::Update()
 		DrawTextEx(font, cadena, { 410, 805 }, 25, 0, YELLOW);
 		DrawTextEx(font, "BEST:", { 360, 808 }, 20, 0, YELLOW);
 
+
+		
+
 		ball->Update();
 
 		break;
 	case State::DEAD:
 		rubyBoard->Update();
+
+		
 
 		DrawTexture(gameOver,40, 400, WHITE);
 
@@ -885,20 +905,27 @@ update_status ModuleGame::Update()
 			state = State::SCORE;
 			player.lifes = 3;
 			cnt = 0;
+			
 		}
 
 		break;
+
 	case State::SCORE:
 		if (player.actualScore > player.bestScore){
 			player.bestScore = player.actualScore;
 		}
 	
 		player.actualScore = 0;
+		StopSound(gameOverMusic);
+		PlayMusicStream(music);
 		state = State::INGAME;
 		break;
+
 	default:
 		break;
 	}
+
+	
 
 	DrawTexture(ballTex, 60, 825, WHITE);
 	sprintf_s(cadena, "%d", player.lifes);
@@ -909,6 +936,9 @@ update_status ModuleGame::Update()
 
 	pikachu->Update();
 	spoink->Update();
+
+	/*UpdateMusicStream(gameOverMusic);*/
+	UpdateMusicStream(music);
 
 	return UPDATE_CONTINUE;
 }
@@ -927,7 +957,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	else if (dir == RightImpulser) force = { -0.4f, -0.9f };
 	else if (dir == Points) {
 		player.actualScore += 100;
-		PlayMusicStream(pointsSFX);
+		PlaySound(pointsSFX);
 	}
 	else if (dir == Dead) dead = true;
 
@@ -936,6 +966,9 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	}
 
 	if (dir == 10 && start == false) start = true;
+
+
+	
 
 	// Force to shoot the ball
 	ball->ShootBall(force);
@@ -949,6 +982,8 @@ bool ModuleGame::CleanUp()
 	UnloadTexture(ballTex);
 
 	StopMusicStream(music);
+	StopSound(deadSFX);
+	StopSound(pointsSFX);
 	UnloadMusicStream(music);
 
 	delete ball;
