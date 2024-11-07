@@ -182,9 +182,35 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 	return pbody;
 }
 
-b2PrismaticJoint* ModulePhysics::CreateSpring(/*int x, int y, int width, int height, */PhysBody* bodyA, PhysBody* bodyB, b2Vec2 axis) {
+b2RevoluteJoint* ModulePhysics::CreateFlipper(PhysBody* bodyA, PhysBody* bodyB, b2Vec2 anchor) {
 
+	b2RevoluteJointDef def;
+	def.Initialize(bodyA->body, bodyB->body, bodyB->body->GetWorldCenter());
+	def.collideConnected = false;
+	def.enableLimit = true;
+	def.enableMotor = true;
+	def.maxMotorTorque = 150.0f;
 	
+	if (anchor.x > PIXEL_TO_METERS(SCREEN_WIDTH/2)) { // RIGHT FLIPPER
+		def.upperAngle = 0.15f * b2_pi;
+		def.lowerAngle = -0.25f * b2_pi;
+		def.motorSpeed = 10.0f;
+		
+		
+	}
+	else { // LEFT FLIPPER
+		def.upperAngle = 0.25f * b2_pi;
+		def.lowerAngle = -0.15f * b2_pi;
+		def.motorSpeed = -10.0f;
+
+	}
+	
+	b2RevoluteJoint* revJoint = (b2RevoluteJoint*)world->CreateJoint(&def);
+	return revJoint;
+}
+
+b2PrismaticJoint* ModulePhysics::CreateSpring(PhysBody* bodyA, PhysBody* bodyB, b2Vec2 axis) {
+
 
 	float scale = 2.0f;
 
@@ -204,7 +230,7 @@ b2PrismaticJoint* ModulePhysics::CreateSpring(/*int x, int y, int width, int hei
 	//create & add to world
 	b2PrismaticJoint* prismaticJoint = (b2PrismaticJoint*)world->CreateJoint(&def);
 
-	//prismaticJoint->SetLimits(PIXEL_TO_METERS(7), PIXEL_TO_METERS(-7));
+
 
 	return prismaticJoint;
 

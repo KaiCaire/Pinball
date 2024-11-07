@@ -83,7 +83,6 @@ public:
 	{
 
 	}
-
 	void Update() override
 	{
 		int x, y;
@@ -97,8 +96,6 @@ public:
 	{
 		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);;
 	}
-
-
 
 private:
 	Texture2D texture;
@@ -162,8 +159,6 @@ public:
 		329, 162,
 		276, 145
 	};
-
-
 
 	Board(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
 		: PhysicEntity(physics->CreateChain(0, 0, board_circuit, 98, b2_staticBody,1), _listener)
@@ -392,7 +387,6 @@ public:
 		380, 672
 	};
 
-
 	static constexpr int circuit9[8] = {
 		347, 663,
 		342, 663,
@@ -407,7 +401,6 @@ public:
 		313, 727,
 		307, 726
 	};
-
 
 	Obstacle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
 		: PhysicEntity(nullptr, _listener), texture(_texture)
@@ -542,19 +535,26 @@ private:
 	}
 };
 
-class PalancaDer : public PhysicEntity
+class RightFlipper : public PhysicEntity
 {
 public:
-	PalancaDer(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 60, 20, b2_kinematicBody, NoInteraction), _listener), texture(_texture)
+
+	b2RevoluteJoint* revJoint;
+	PhysBody* rightAnchor;
+	
+	
+	RightFlipper(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 60, 20, b2_dynamicBody, NoInteraction), _listener), texture(_texture)
 	{
 		// Initialize the bounding box based on the texture
 		width = 32;
 		height = 16;
 
+		rightAnchor = physics->CreateRectangle(305, 790, 1, 1, b2_staticBody, NoInteraction);
+		revJoint = physics->CreateFlipper(this->body, rightAnchor, b2Vec2(rightAnchor->body->GetPosition()));
 	}
-	bool rotate = false;
-	int x = 7;
+	//bool rotate = false;
+	//int x = 7;
 
 	void Update() override
 	{
@@ -567,33 +567,71 @@ public:
 		Vector2 origin = GetTextureOrigin(); // Updated method to get the origin
 
 		float rotation = body->GetRotation() * RAD2DEG;
-		b2Vec2 vel = {0.0f,1.0f};
-		if (rotate){
-			//rotation -= x;
-			if (x < 20){
-				body->body->SetAngularVelocity(4.5f);
-				vel = { 0.4f,-1.1f };
-				x++;
-			}
-			else{
-				body->body->SetAngularVelocity(0.0f);
-				vel = { 0.0f,0.0f };
-			}
-			body->body->SetLinearVelocity(vel);
-		}
-		else if (x != 0)
-		{
-			body->body->SetAngularVelocity(-4.5f);
-			x--;
-			vel = { -0.4f, 1.1f };
-			body->body->SetLinearVelocity(vel);
-		}
-		else{
-			body->body->SetAngularVelocity(0.0f);
-			vel = { 0.0f,0.0f };
+		
+		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
+	}
 
-			body->body->SetLinearVelocity(vel);
-		}
+	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
+	{
+		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
+	}
+
+
+
+private:
+	Texture2D texture;
+	int width;
+	int height;
+	
+
+	Vector2 GetColliderPosition() const
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		return { (float)x, (float)y };
+	}
+
+	Vector2 GetTextureOrigin() const
+	{
+		// Adjust origin based on width and height to center the texture correctly
+		return { (float)(width), (float)(texture.height / 2) };
+	}
+};
+
+
+class LeftFlipper : public PhysicEntity
+{
+public:
+
+	b2RevoluteJoint* revJoint;
+	PhysBody* leftAnchor;
+
+	LeftFlipper(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 60, 20, b2_dynamicBody, 1), _listener), texture(_texture)
+	{
+		// Initialize the bounding box based on the texture
+		width = 32;
+		height = 16;
+
+		
+		leftAnchor = physics->CreateRectangle(175, 790, 1, 1, b2_staticBody, NoInteraction);
+		revJoint = physics->CreateFlipper(this->body, leftAnchor, b2Vec2(leftAnchor->body->GetPosition()));
+		
+	}
+
+	void Update() override
+	{
+		Vector2 position = GetColliderPosition();
+		float scale = 2.0f;
+
+		Rectangle source = { 0.0f, 0.0f, (float)width, (float)texture.height };
+		Rectangle dest = { position.x, position.y - (texture.height / 1.5f), width * scale, (float)texture.height * scale };
+
+		Vector2 origin = GetTextureOrigin(); // Updated method to get the origin
+
+		float rotation = body->GetRotation() * RAD2DEG;
+
+		
 		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 	}
 
@@ -620,85 +658,6 @@ private:
 		return { (float)(width), (float)(texture.height / 2) };
 	}
 };
-
-class PalancaIzq : public PhysicEntity
-{
-public:
-	PalancaIzq(ModulePhysics* physics, int _x, int _y, Module* _listener, const Texture2D& _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 58, 20, b2_kinematicBody, 1), _listener), texture(_texture)
-	{
-		// Initialize the bounding box based on the texture
-		width = 32;
-		height = 16;
-	}
-	bool rotate = false;
-	int x = 7;
-
-	void Update() override
-	{
-		Vector2 position = GetColliderPosition();
-		float scale = 2.0f;
-
-		Rectangle source = { 0.0f, 0.0f, (float)width, (float)texture.height };
-		Rectangle dest = { position.x, position.y - (texture.height / 1.5f), width * scale, (float)texture.height * scale };
-
-		Vector2 origin = GetTextureOrigin(); // Updated method to get the origin
-
-		float rotation = body->GetRotation() * RAD2DEG;
-		b2Vec2 vel = { 0.0f,1.0f };
-		if (rotate) { 
-
-			if (x < 20) {
-				body->body->SetAngularVelocity(-4.5f);
-				vel = { -0.4f,-1.1f };
-				x++;
-			}
-			else {
-				body->body->SetAngularVelocity(0.0f);
-				vel = { 0.0f,0.0f };
-			}
-			body->body->SetLinearVelocity(vel);
-		}
-		else if (x != 0)
-		{
-			body->body->SetAngularVelocity(4.5f);
-			x--;
-			vel = { 0.4f,1.1f };
-			body->body->SetLinearVelocity(vel);
-		}
-		else {
-			body->body->SetAngularVelocity(0.0f);
-			vel = { 0.0f,0.0f };
-
-			body->body->SetLinearVelocity(vel);
-		}
-		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
-	}
-
-	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
-	{
-		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
-	}
-
-private:
-	Texture2D texture;
-	int width;
-	int height;
-
-	Vector2 GetColliderPosition() const
-	{
-		int x, y;
-		body->GetPhysicPosition(x, y);
-		return { (float)x, (float)y };
-	}
-
-	Vector2 GetTextureOrigin() const
-	{
-		// Adjust origin based on width and height to center the texture correctly
-		return { (float)(width), (float)(texture.height / 2) };
-	}
-};
-
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -736,6 +695,7 @@ bool ModuleGame::Start()
 	frames[2] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_4.png");
 	frames[3] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_2.png");
 	frames[4] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
+<<<<<<< HEAD
 	frames[5] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_A_1.png");
 	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_A_2.png");
 	frames[7] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_A_3.png");
@@ -748,6 +708,16 @@ bool ModuleGame::Start()
 
 	palancaDer = new PalancaDer(App->physics, 285, 798, this, palancaderSheet);
 	palancaIzq = new PalancaIzq(App->physics, 198, 798, this, palancaizqSheet);
+=======
+
+	frames[5] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_1.png");
+	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_2.png");
+	frames[7] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_3.png");
+
+	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
+	rFlip = new RightFlipper(App->physics, 280, 790, this, palancaderSheet);
+	lFlip = new LeftFlipper(App->physics, 200, 790, this, palancaizqSheet);
+>>>>>>> a61905cc258afb297823e6832c72492a60ec24e5
 
 
 	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
@@ -808,7 +778,6 @@ update_status ModuleGame::Update()
 		{ 
 			blocker->changeColision(true);
 			oneTime = true;
-			//blocker->Update();
 		}
 
 		if (ball == NULL) {
@@ -828,6 +797,7 @@ update_status ModuleGame::Update()
 
 		// ANIMACION SPOINK
 		timer += GetFrameTime();
+<<<<<<< HEAD
 		if (timer >= frameTime) {
 			timer = 0.0f;
 			currentFrame++;
@@ -837,9 +807,25 @@ update_status ModuleGame::Update()
 			}
 			}
 			else{
+=======
+
+		if(!changeAnimation) {
+			if (timer >= frameTime) {
+				timer = 0.0f;
+				currentFrame++;
+>>>>>>> a61905cc258afb297823e6832c72492a60ec24e5
 				if (currentFrame >= 5) currentFrame = 0; // Reinicia el ciclo
 			}
 		}
+		else
+		{
+			if (timer >= frameTime) {
+				timer = 0.0f;
+				currentFrame++;
+				if (currentFrame >= 7) currentFrame = 5; // Reinicia el ciclo
+			}
+		}
+
 		spoink->texture = frames[currentFrame];
 
 		if (canImpulse) {
@@ -875,12 +861,14 @@ update_status ModuleGame::Update()
 			}
 			else
 			{
-				if (IsKeyPressed(KEY_DOWN)){
+				if (IsKeyDown(KEY_DOWN)){
+					changeAnimation = true;
 					spoink->joint->SetMotorSpeed(-0.5f);
 				}
 
 				else if (IsKeyReleased(KEY_DOWN))
 				{
+					changeAnimation = false;
 					spoink->joint->SetMotorSpeed(200.0f);
 					canImpulse = false;
 				}
@@ -909,6 +897,7 @@ update_status ModuleGame::Update()
 			spoink->joint->SetMotorSpeed(0.0f);  // Stop at the bottom
 		}
 
+<<<<<<< HEAD
 		if (IsKeyPressed(KEY_RIGHT)) { 
 			palancaDer->rotate = true; 
 			pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
@@ -922,6 +911,22 @@ update_status ModuleGame::Update()
 
 		}
 		else if (IsKeyReleased(KEY_LEFT)) palancaIzq->rotate = false;
+=======
+		if (IsKeyDown(KEY_RIGHT)) {
+			//The revolute joint angle is positive when its body rotates CCW about the angle point.
+			rFlip->revJoint->SetMotorSpeed(-4.0f);
+		}
+		else if (IsKeyReleased(KEY_RIGHT)) {
+			rFlip->revJoint->SetMotorSpeed(4.0f);
+		}
+
+		if (IsKeyDown(KEY_LEFT)) {
+			lFlip->revJoint->SetMotorSpeed(4.0f);
+		}
+		else if (IsKeyReleased(KEY_LEFT)) {
+			lFlip->revJoint->SetMotorSpeed(-4.0f);
+		}
+>>>>>>> a61905cc258afb297823e6832c72492a60ec24e5
 
 		if (dead) {
 			ball->updatePosition();
@@ -938,6 +943,8 @@ update_status ModuleGame::Update()
 
 		if(player.lifes == 0) state = State::DEAD;
 
+		pikachu->Update();
+		spoink->Update();
 
 		sprintf_s(cadena, "%d", player.actualScore);
 		DrawTextEx(font, cadena, { 410, 822}, 30,0, WHITE);
@@ -983,8 +990,8 @@ update_status ModuleGame::Update()
 	sprintf_s(cadena, "%d", player.lifes);
 	DrawTextEx(font, cadena, { 80, 820 }, 25, 0, WHITE);
 
-	palancaDer->Update();
-	palancaIzq->Update();
+	rFlip->Update();
+	lFlip->Update();
 
 	pikachu->Update();
 	spoink->Update();
@@ -1034,8 +1041,10 @@ bool ModuleGame::CleanUp()
 	delete rubyBoard;
 	delete spoink;
 	delete pikachu;
-	delete palancaDer;
-	delete palancaIzq;
+	//delete palancaDer;
+	//delete palancaIzq;
+	delete rFlip;
+	delete lFlip;
 
 	return true;
 }

@@ -22,6 +22,10 @@ class Block;
 class PalancaDer;
 class PalancaIzq;
 
+class RightFlipper;
+class LeftFlipper;
+
+
 #define NoInteraction 1 
 
 #define LeftImpulser 2 
@@ -90,8 +94,10 @@ public:
 	Spring* spoink;
 	Texture2D spoinkSheet;
 	Pikachu* pikachu;
-	PalancaDer* palancaDer;
-	PalancaIzq* palancaIzq;
+	RightFlipper* rFlip;
+	LeftFlipper* lFlip;
+	//PalancaDer* palancaDer;
+	//PalancaIzq* palancaIzq;
 
 	Block* blocker;
 
@@ -115,4 +121,5 @@ public:
 
 	bool start;
 	bool oneTime;
+	bool changeAnimation;
 };
