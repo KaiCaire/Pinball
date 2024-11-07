@@ -515,8 +515,9 @@ public:
 		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
 	}
 
-private:
 	Texture2D texture;
+
+private:
 	int width;
 	int height;
 
@@ -694,6 +695,20 @@ bool ModuleGame::Start()
 	frames[2] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_4.png");
 	frames[3] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_2.png");
 	frames[4] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
+<<<<<<< HEAD
+	frames[5] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_A_1.png");
+	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_A_2.png");
+	frames[7] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_A_3.png");
+
+	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
+
+	//CARGAR FRAMES DE LA ANIMACIÓN PIKACHU
+	frames_pikachu[0] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_1.png");
+	frames_pikachu[1] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_2.png");
+
+	palancaDer = new PalancaDer(App->physics, 285, 798, this, palancaderSheet);
+	palancaIzq = new PalancaIzq(App->physics, 198, 798, this, palancaizqSheet);
+=======
 
 	frames[5] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_1.png");
 	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_2.png");
@@ -703,6 +718,7 @@ bool ModuleGame::Start()
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 	rFlip = new RightFlipper(App->physics, 280, 790, this, palancaderSheet);
 	lFlip = new LeftFlipper(App->physics, 200, 790, this, palancaizqSheet);
+>>>>>>> a61905cc258afb297823e6832c72492a60ec24e5
 
 
 	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
@@ -776,13 +792,36 @@ update_status ModuleGame::Update()
 			ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
 		}
 
+		//Animation pikachu
+		timer_pikachu += GetFrameTime();
+		if (timer_pikachu >= frameTime_pikachu)
+		{
+			timer_pikachu = 0.0f;
+			currentFrame_pikachu++;
+			if (currentFrame_pikachu >= 2) currentFrame_pikachu = 0; // Reinicia el ciclo
+		}
+		pikachu->texture = frames_pikachu[currentFrame_pikachu];
+
+
 		// ANIMACION SPOINK
 		timer += GetFrameTime();
+<<<<<<< HEAD
+		if (timer >= frameTime) {
+			timer = 0.0f;
+			currentFrame++;
+			if (canImpulse == true && IsKeyReleased(KEY_SPACE)) {
+				if (currentFrame >= 6 && currentFrame >= 8) {
+					currentFrame = 6; // Reinicia el ciclo
+			}
+			}
+			else{
+=======
 
 		if(!changeAnimation) {
 			if (timer >= frameTime) {
 				timer = 0.0f;
 				currentFrame++;
+>>>>>>> a61905cc258afb297823e6832c72492a60ec24e5
 				if (currentFrame >= 5) currentFrame = 0; // Reinicia el ciclo
 			}
 		}
@@ -807,6 +846,26 @@ update_status ModuleGame::Update()
 					canImpulse = false;
 					basicImpulser = false;
 				}
+
+				//if (IsKeyPressed(KEY_SPACE)) {
+				//	// Apply a force to the plunger when the space key is pressed
+				//	timer += GetFrameTime();
+				//	if (timer >= frameTime) {
+				//		timer = 0.0f;
+				//		currentFrame++;
+				//		if (currentFrame >= 6 && currentFrame >= 8) currentFrame = 6; // Reinicia el ciclo
+				//		}
+				//	spoink->texture = frames[currentFrame];
+				//}
+
+				if (IsKeyReleased(KEY_SPACE)) {
+					b2Vec2 force(0.0f, -1.1f); // Fuerza que se aplica cuando se suelta la tecla
+					ball->ShootBall(force);
+					canImpulse = false;
+					basicImpulser = false;
+
+				}
+
 			}
 			else
 			{
@@ -821,6 +880,17 @@ update_status ModuleGame::Update()
 					spoink->joint->SetMotorSpeed(200.0f);
 					canImpulse = false;
 				}
+
+				if (IsKeyPressed(KEY_SPACE)) {
+					spoink->joint->SetMotorSpeed(-0.5f);
+				}
+
+				else if (IsKeyReleased(KEY_SPACE))
+				{
+					spoink->joint->SetMotorSpeed(200.0f);
+					canImpulse = false;
+				}
+
 			}
 		}
 
@@ -835,6 +905,21 @@ update_status ModuleGame::Update()
 			spoink->joint->SetMotorSpeed(0.0f);  // Stop at the bottom
 		}
 
+<<<<<<< HEAD
+		if (IsKeyPressed(KEY_RIGHT)) { 
+			palancaDer->rotate = true; 
+			pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
+
+		}
+		else if (IsKeyReleased(KEY_RIGHT)) palancaDer->rotate = false;
+
+		if (IsKeyPressed(KEY_LEFT)) {
+			palancaIzq->rotate = true;
+			pikachu = new Pikachu(App->physics, 66, 775, this, pikachuSheet);
+
+		}
+		else if (IsKeyReleased(KEY_LEFT)) palancaIzq->rotate = false;
+=======
 		if (IsKeyDown(KEY_RIGHT)) {
 			//The revolute joint angle is positive when its body rotates CCW about the angle point.
 			rFlip->revJoint->SetMotorSpeed(-4.0f);
@@ -849,6 +934,7 @@ update_status ModuleGame::Update()
 		else if (IsKeyReleased(KEY_LEFT)) {
 			lFlip->revJoint->SetMotorSpeed(-4.0f);
 		}
+>>>>>>> a61905cc258afb297823e6832c72492a60ec24e5
 
 		if (dead) {
 			ball->updatePosition();

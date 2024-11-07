@@ -69,6 +69,11 @@ public:
 	float timer = 0.0f;
 	Texture2D frames[8];
 
+	int currentFrame_pikachu = 0;
+	float frameTime_pikachu = 0.15f;   // Duración de cada frame en segundos
+	float timer_pikachu = 0.0f;
+	Texture2D frames_pikachu[2];
+
 	PhysBody* sensor;
 	PhysBody* sensorBlock;
 
