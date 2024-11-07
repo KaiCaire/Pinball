@@ -514,7 +514,6 @@ public:
 	{
 		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
 	}
-
 	Texture2D texture;
 
 private:
@@ -695,10 +694,10 @@ bool ModuleGame::Start()
 	frames[2] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_4.png");
 	frames[3] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_2.png");
 	frames[4] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
-<<<<<<< HEAD
-	frames[5] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_A_1.png");
-	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_A_2.png");
-	frames[7] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_A_3.png");
+
+	frames[5] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_1.png");
+	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_2.png");
+	frames[7] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_3.png");
 
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 
@@ -706,19 +705,8 @@ bool ModuleGame::Start()
 	frames_pikachu[0] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_1.png");
 	frames_pikachu[1] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_2.png");
 
-	palancaDer = new PalancaDer(App->physics, 285, 798, this, palancaderSheet);
-	palancaIzq = new PalancaIzq(App->physics, 198, 798, this, palancaizqSheet);
-=======
-
-	frames[5] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_1.png");
-	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_2.png");
-	frames[7] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_3.png");
-	
-
-	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 	rFlip = new RightFlipper(App->physics, 280, 790, this, palancaderSheet);
 	lFlip = new LeftFlipper(App->physics, 200, 790, this, palancaizqSheet);
->>>>>>> a61905cc258afb297823e6832c72492a60ec24e5
 
 
 	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
@@ -737,12 +725,9 @@ bool ModuleGame::Start()
 	sensor = App->physics->CreateRectangleSensor(242, 850, 82, 10, b2_staticBody, Dead);   //Dead
 
 	music = LoadMusicStream("Assets/Ruby/Music Tracks/RedTableTrack.mp3");
-	gameOverMusic = LoadSound("Assets/Ruby/Music Tracks/Game Over.mp3");
-	/*gameOverMusic.looping = false;*/
+	pointsSFX = LoadMusicStream("Assets/Ruby/Sounds/Another pling.WAV");
+	deadSFX = LoadMusicStream("Assets/Ruby/Sounds/DOOoo.WAV");
 
-	pointsSFX = LoadSound("Assets/Ruby/Sounds/Another pling.WAV");
-	deadSFX = LoadSound("Assets/Ruby/Sounds/DOOoo.WAV");
-	
 	if (music.stream.buffer == NULL) // Verifica que se haya cargado correctamente
 	{
 		LOG("Error loading music stream");
@@ -752,13 +737,6 @@ bool ModuleGame::Start()
 	{
 		PlayMusicStream(music);
 	}
-
-	if (gameOverMusic.stream.buffer == NULL) // Verifica que se haya cargado correctamente
-	{
-		LOG("Error loading gameOverMusic stream");
-		ret = false;
-	}
-	
 	
 	state = State::INGAME;
 
@@ -774,10 +752,13 @@ update_status ModuleGame::Update()
 	{
 	case State::INGAME:
 		
-		
-		
-		
-		
+		UpdateMusicStream(music);
+
+		UpdateMusicStream(pointsSFX);
+		pointsSFX.looping = false;
+
+		UpdateMusicStream(deadSFX);
+		deadSFX.looping = false;
 
 		rubyBoard->Update();
 		rubyObstacle->Update();
@@ -791,37 +772,24 @@ update_status ModuleGame::Update()
 		if (ball == NULL) {
 			ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
 		}
-
-		//Animation pikachu
+		//ANIMATION PIKACHU
 		timer_pikachu += GetFrameTime();
 		if (timer_pikachu >= frameTime_pikachu)
 		{
 			timer_pikachu = 0.0f;
 			currentFrame_pikachu++;
-			if (currentFrame_pikachu >= 2) currentFrame_pikachu = 0; // Reinicia el ciclo
+			if (currentFrame_pikachu >= 2) currentFrame_pikachu = 0;	// Reinicia el ciclo
+
 		}
 		pikachu->texture = frames_pikachu[currentFrame_pikachu];
 
-
 		// ANIMACION SPOINK
 		timer += GetFrameTime();
-<<<<<<< HEAD
-		if (timer >= frameTime) {
-			timer = 0.0f;
-			currentFrame++;
-			if (canImpulse == true && IsKeyReleased(KEY_SPACE)) {
-				if (currentFrame >= 6 && currentFrame >= 8) {
-					currentFrame = 6; // Reinicia el ciclo
-			}
-			}
-			else{
-=======
 
 		if(!changeAnimation) {
 			if (timer >= frameTime) {
 				timer = 0.0f;
 				currentFrame++;
->>>>>>> a61905cc258afb297823e6832c72492a60ec24e5
 				if (currentFrame >= 5) currentFrame = 0; // Reinicia el ciclo
 			}
 		}
@@ -846,26 +814,6 @@ update_status ModuleGame::Update()
 					canImpulse = false;
 					basicImpulser = false;
 				}
-
-				//if (IsKeyPressed(KEY_SPACE)) {
-				//	// Apply a force to the plunger when the space key is pressed
-				//	timer += GetFrameTime();
-				//	if (timer >= frameTime) {
-				//		timer = 0.0f;
-				//		currentFrame++;
-				//		if (currentFrame >= 6 && currentFrame >= 8) currentFrame = 6; // Reinicia el ciclo
-				//		}
-				//	spoink->texture = frames[currentFrame];
-				//}
-
-				if (IsKeyReleased(KEY_SPACE)) {
-					b2Vec2 force(0.0f, -1.1f); // Fuerza que se aplica cuando se suelta la tecla
-					ball->ShootBall(force);
-					canImpulse = false;
-					basicImpulser = false;
-
-				}
-
 			}
 			else
 			{
@@ -880,17 +828,6 @@ update_status ModuleGame::Update()
 					spoink->joint->SetMotorSpeed(200.0f);
 					canImpulse = false;
 				}
-
-				if (IsKeyPressed(KEY_SPACE)) {
-					spoink->joint->SetMotorSpeed(-0.5f);
-				}
-
-				else if (IsKeyReleased(KEY_SPACE))
-				{
-					spoink->joint->SetMotorSpeed(200.0f);
-					canImpulse = false;
-				}
-
 			}
 		}
 
@@ -905,23 +842,10 @@ update_status ModuleGame::Update()
 			spoink->joint->SetMotorSpeed(0.0f);  // Stop at the bottom
 		}
 
-<<<<<<< HEAD
-		if (IsKeyPressed(KEY_RIGHT)) { 
-			palancaDer->rotate = true; 
-			pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
-
-		}
-		else if (IsKeyReleased(KEY_RIGHT)) palancaDer->rotate = false;
-
-		if (IsKeyPressed(KEY_LEFT)) {
-			palancaIzq->rotate = true;
-			pikachu = new Pikachu(App->physics, 66, 775, this, pikachuSheet);
-
-		}
-		else if (IsKeyReleased(KEY_LEFT)) palancaIzq->rotate = false;
-=======
 		if (IsKeyDown(KEY_RIGHT)) {
 			//The revolute joint angle is positive when its body rotates CCW about the angle point.
+			pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
+
 			rFlip->revJoint->SetMotorSpeed(-4.0f);
 		}
 		else if (IsKeyReleased(KEY_RIGHT)) {
@@ -929,19 +853,17 @@ update_status ModuleGame::Update()
 		}
 
 		if (IsKeyDown(KEY_LEFT)) {
+			pikachu = new Pikachu(App->physics, 66, 775, this, pikachuSheet);
+
 			lFlip->revJoint->SetMotorSpeed(4.0f);
 		}
 		else if (IsKeyReleased(KEY_LEFT)) {
 			lFlip->revJoint->SetMotorSpeed(-4.0f);
 		}
->>>>>>> a61905cc258afb297823e6832c72492a60ec24e5
 
 		if (dead) {
 			ball->updatePosition();
-			
-			PlaySound(deadSFX);
-			
-
+			PlayMusicStream(deadSFX);
 			player.lifes -= 1;
 			oneTime = false;
 			start = false;
@@ -952,11 +874,7 @@ update_status ModuleGame::Update()
 			printf("%d, %d, \n", GetMouseX(), GetMouseY());
 		}
 
-		if (player.lifes == 0) {
-			StopMusicStream(music);
-			PlaySound(gameOverMusic);
-			state = State::DEAD;
-		}
+		if(player.lifes == 0) state = State::DEAD;
 
 		pikachu->Update();
 		spoink->Update();
@@ -968,16 +886,11 @@ update_status ModuleGame::Update()
 		DrawTextEx(font, cadena, { 410, 805 }, 25, 0, YELLOW);
 		DrawTextEx(font, "BEST:", { 360, 808 }, 20, 0, YELLOW);
 
-
-		
-
 		ball->Update();
 
 		break;
 	case State::DEAD:
 		rubyBoard->Update();
-
-		
 
 		DrawTexture(gameOver,40, 400, WHITE);
 
@@ -991,27 +904,20 @@ update_status ModuleGame::Update()
 			state = State::SCORE;
 			player.lifes = 3;
 			cnt = 0;
-			
 		}
 
 		break;
-
 	case State::SCORE:
 		if (player.actualScore > player.bestScore){
 			player.bestScore = player.actualScore;
 		}
 	
 		player.actualScore = 0;
-		StopSound(gameOverMusic);
-		PlayMusicStream(music);
 		state = State::INGAME;
 		break;
-
 	default:
 		break;
 	}
-
-	
 
 	DrawTexture(ballTex, 60, 825, WHITE);
 	sprintf_s(cadena, "%d", player.lifes);
@@ -1022,9 +928,6 @@ update_status ModuleGame::Update()
 
 	pikachu->Update();
 	spoink->Update();
-
-	/*UpdateMusicStream(gameOverMusic);*/
-	UpdateMusicStream(music);
 
 	return UPDATE_CONTINUE;
 }
@@ -1043,7 +946,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	else if (dir == RightImpulser) force = { -0.4f, -0.9f };
 	else if (dir == Points) {
 		player.actualScore += 100;
-		PlaySound(pointsSFX);
+		PlayMusicStream(pointsSFX);
 	}
 	else if (dir == Dead) dead = true;
 
@@ -1052,9 +955,6 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	}
 
 	if (dir == 10 && start == false) start = true;
-
-
-	
 
 	// Force to shoot the ball
 	ball->ShootBall(force);
@@ -1068,8 +968,6 @@ bool ModuleGame::CleanUp()
 	UnloadTexture(ballTex);
 
 	StopMusicStream(music);
-	StopSound(deadSFX);
-	StopSound(pointsSFX);
 	UnloadMusicStream(music);
 
 	delete ball;

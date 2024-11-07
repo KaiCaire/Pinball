@@ -56,13 +56,8 @@ public:
 
 	std::vector<PhysicEntity*> entities;
 	Music music;
-	Sound gameOverMusic;
-	Sound pointsSFX;
-	Sound deadSFX;
-	
-	/*Music pointsSFX;
-	Music deadSFX;*/
-	 
+	Music pointsSFX;
+	Music deadSFX;
 
 	int currentFrame = 0;
 	float frameTime = 0.15f;   // Duración de cada frame en segundos
