@@ -802,7 +802,7 @@ update_status ModuleGame::Update()
 			}
 			else
 			{
-				if (IsKeyPressed(KEY_DOWN)){
+				if (IsKeyDown(KEY_DOWN)){
 					changeAnimation = true;
 					spoink->joint->SetMotorSpeed(-0.5f);
 				}
