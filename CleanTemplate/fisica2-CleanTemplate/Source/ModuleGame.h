@@ -116,4 +116,5 @@ public:
 
 	bool start;
 	bool oneTime;
+	bool changeAnimation;
 };
