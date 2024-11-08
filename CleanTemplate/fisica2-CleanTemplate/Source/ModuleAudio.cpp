@@ -86,8 +86,8 @@ unsigned int ModuleAudio::LoadFx(const char* path)
 	}
 	else
 	{
-        fx[fx_count] = sound;
-		fx_count++;
+        fx[fx_count++] = sound;
+		
 		ret = fx_count;
 	}
 
@@ -105,9 +105,9 @@ bool ModuleAudio::PlayFx(unsigned int id, int repeat)
 	bool ret = false;
 	/*fx_count++;*/
 
-	if (id == fx_count) {
+	if (id <= fx_count) {
 		PlaySound(fx[id-1]);
-		LOG("flipper sound played");
+		
 	}
 
 	return ret;

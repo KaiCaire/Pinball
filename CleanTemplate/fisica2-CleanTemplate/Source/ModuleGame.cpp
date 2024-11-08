@@ -745,7 +745,10 @@ bool ModuleGame::Start()
 	deadSFX = LoadSound("Assets/Ruby/Sounds/DOOoo.WAV");
 	impulserSFX = LoadSound("Assets/Ruby/Sounds/Do.WAV");
 
+
 	flipperFX = App->audio->LoadFx("Assets/Ruby/Sounds/flipperFX.mp3");
+	spoink_chargeSFX = App->audio->LoadFx("Assets/Ruby/Sounds/spoink_charge.wav");
+	spoink_releaseSFX = App->audio->LoadFx("Assets/Ruby/Sounds/spoink_release.wav");
 
 	if (music.stream.buffer == NULL) // Verifica que se haya cargado correctamente
 	{
@@ -829,6 +832,7 @@ update_status ModuleGame::Update()
 			{
 				if (IsKeyReleased(KEY_DOWN)) {
 					// Apply a force to the plunger when the space key is pressed
+					
 					b2Vec2 force(0.0f, -0.7f);
 					ball->ShootBall(force);
 					canImpulse = false;
@@ -837,13 +841,15 @@ update_status ModuleGame::Update()
 			}
 			else
 			{
-				if (IsKeyDown(KEY_DOWN)){
+				if (IsKeyPressed(KEY_DOWN)){
+					App->audio->PlayFx(spoink_chargeSFX);
 					changeAnimation = true;
 					spoink->joint->SetMotorSpeed(-0.5f);
 				}
 
 				else if (IsKeyReleased(KEY_DOWN))
 				{
+					App->audio->PlayFx(spoink_releaseSFX);
 					changeAnimation = false;
 					spoink->joint->SetMotorSpeed(200.0f);
 					canImpulse = false;
@@ -888,6 +894,8 @@ update_status ModuleGame::Update()
 			lFlip->revJoint->SetMotorSpeed(-4.0f);
 		}
 
+		//lives management
+
 		if (dead) {
 			ball->updatePosition();
 			
@@ -910,6 +918,8 @@ update_status ModuleGame::Update()
 
 		pikachu->Update();
 		spoink->Update();
+
+		//text (scores) rendering
 
 		sprintf_s(cadena, "%d", player.actualScore);
 		DrawTextEx(font, cadena, { 410, 822}, 30,0, WHITE);
@@ -941,7 +951,9 @@ update_status ModuleGame::Update()
 		}
 
 		break;
+
 	case State::DEAD:
+
 		rubyBoard->Update();
 
 		DrawTexture(gameOver,40, 400, WHITE);
@@ -952,14 +964,16 @@ update_status ModuleGame::Update()
 		if (cnt >= 80) cnt = 0;
 		cnt++;
 
-		if (IsKeyPressed(KEY_SPACE)){
+		if (IsKeyPressed(KEY_SPACE)) {
 			state = State::SCORE;
 			player.lifes = 3;
 			cnt = 0;
 		}
 
 		break;
+
 	case State::SCORE:
+
 		if (player.actualScore > player.bestScore){
 			player.bestScore = player.actualScore;
 		}

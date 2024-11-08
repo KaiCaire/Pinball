@@ -60,8 +60,9 @@ public:
 	Sound pointsSFX;
 	Sound deadSFX;
 	Sound impulserSFX;
-
-	unsigned int flipperFX = -1;
+	int flipperFX;
+	int spoink_chargeSFX;
+	int spoink_releaseSFX;
 
 	/*Music pointsSFX;
 	Music deadSFX;*/
