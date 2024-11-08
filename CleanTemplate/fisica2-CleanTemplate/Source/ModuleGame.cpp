@@ -685,6 +685,14 @@ bool ModuleGame::Start()
 	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
 	gameOver = LoadTexture("Assets/Ruby/GAME OVER.png");
 
+	ContactFlipperRight = LoadTexture("Assets/Ruby/ContactImpulserRight.png");
+	ContactFlipperRight.height = ContactFlipperRight.height * 2;
+	ContactFlipperRight.width = ContactFlipperRight.width * 2;
+
+	ContactFlipperLeft = LoadTexture("Assets/Ruby/ContactImpulserLeft.png");
+	ContactFlipperLeft.height = ContactFlipperLeft.height * 2;
+	ContactFlipperLeft.width = ContactFlipperLeft.width * 2;
+
 
 	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
 	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
@@ -735,6 +743,7 @@ bool ModuleGame::Start()
 	gameOverMusic = LoadSound("Assets/Ruby/Music Tracks/Game Over.mp3");
 	pointsSFX = LoadSound("Assets/Ruby/Sounds/Another pling.WAV");
 	deadSFX = LoadSound("Assets/Ruby/Sounds/DOOoo.WAV");
+	impulserSFX = LoadSound("Assets/Ruby/Sounds/Do.WAV");
 
 	flipperFX = App->audio->LoadFx("Assets/Ruby/Sounds/flipperFX.mp3");
 
@@ -899,8 +908,6 @@ update_status ModuleGame::Update()
 			state = State::DEAD;
 		}
 
-		
-
 		pikachu->Update();
 		spoink->Update();
 
@@ -912,6 +919,26 @@ update_status ModuleGame::Update()
 		DrawTextEx(font, "BEST:", { 360, 808 }, 20, 0, YELLOW);
 
 		ball->Update();
+
+		if (contactLeft && cnt < 12)
+		{
+			DrawTexture(ContactFlipperLeft, 130, 660, WHITE);
+			cnt++;
+		}
+		else if (!contactRight) {
+			cnt = 0;
+			contactLeft = false;
+		}
+
+		if (contactRight && cnt < 12)
+		{
+			DrawTexture(ContactFlipperRight, 305, 660, WHITE);
+			cnt++;
+		}
+		else if (!contactLeft) {
+			cnt = 0;
+			contactRight = false;
+		}
 
 		break;
 	case State::DEAD:
@@ -948,6 +975,7 @@ update_status ModuleGame::Update()
 		break;
 	}
 
+
 	DrawTexture(ballTex, 60, 825, WHITE);
 	sprintf_s(cadena, "%d", player.lifes);
 	DrawTextEx(font, cadena, { 80, 820 }, 25, 0, WHITE);
@@ -973,11 +1001,21 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 
 	}
 
-	if (dir == LeftImpulser) force = { 0.4f, -0.9f };
-	else if (dir == RightImpulser) force = { -0.4f, -0.9f };
+
+	if (dir == LeftImpulser){
+		PlaySound(impulserSFX);
+		contactLeft = true;
+		force = { 0.4f, -0.9f };
+	}
+
+	else if (dir == RightImpulser){ 
+		PlaySound(impulserSFX);
+		contactRight = true;
+		force = { -0.4f, -0.9f };
+	}
+
 	else if (dir == Points) {
 		player.actualScore += 100;
-		
 		PlaySound(pointsSFX);
 	}
 	else if (dir == Dead) dead = true;

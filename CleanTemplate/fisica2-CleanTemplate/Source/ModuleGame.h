@@ -59,6 +59,8 @@ public:
 	Sound gameOverMusic;
 	Sound pointsSFX;
 	Sound deadSFX;
+	Sound impulserSFX;
+
 	unsigned int flipperFX = -1;
 
 	/*Music pointsSFX;
@@ -96,13 +98,14 @@ public:
 	Texture2D palancaizqSheet;
 	Texture2D gameOver;
 
+	Texture2D ContactFlipperLeft;
+	Texture2D ContactFlipperRight;
+
 	Spring* spoink;
 	Texture2D spoinkSheet;
 	Pikachu* pikachu;
 	RightFlipper* rFlip;
 	LeftFlipper* lFlip;
-	//PalancaDer* palancaDer;
-	//PalancaIzq* palancaIzq;
 
 	Block* blocker;
 
@@ -127,4 +130,7 @@ public:
 	bool start;
 	bool oneTime;
 	bool changeAnimation;
+
+	bool contactRight;
+	bool contactLeft;
 };
