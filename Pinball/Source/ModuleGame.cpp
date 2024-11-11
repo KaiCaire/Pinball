@@ -194,8 +194,6 @@ public:
 		444, 274
 	};
 
-
-
 	Block(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
 		: PhysicEntity(physics->CreateChain(0, 0, board_limit, 16, b2_staticBody, 1), _listener)
 		, texture(_texture)
@@ -578,13 +576,10 @@ public:
 		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
 	}
 
-
-
 private:
 	Texture2D texture;
 	int width;
 	int height;
-	
 
 	Vector2 GetColliderPosition() const
 	{
@@ -614,11 +609,9 @@ public:
 		// Initialize the bounding box based on the texture
 		width = 32;
 		height = 16;
-
 		
 		leftAnchor = physics->CreateRectangle(175, 790, 1, 1, b2_staticBody, NoInteraction);
 		revJoint = physics->CreateFlipper(this->body, leftAnchor, b2Vec2(leftAnchor->body->GetPosition()));
-		
 	}
 
 	void Update() override
@@ -633,7 +626,6 @@ public:
 
 		float rotation = body->GetRotation() * RAD2DEG;
 
-		
 		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 	}
 
@@ -662,9 +654,7 @@ private:
 };
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
-{
-
-}
+{}
 
 ModuleGame::~ModuleGame()
 {}
@@ -797,6 +787,9 @@ update_status ModuleGame::Update()
 		if (ball == NULL) {
 			ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
 		}
+
+		if(player.actualScore >= 1500) state = State::WIN;
+
 		//ANIMATION PIKACHU
 		timer_pikachu += GetFrameTime();
 		if (timer_pikachu >= frameTime_pikachu)
@@ -807,7 +800,6 @@ update_status ModuleGame::Update()
 
 		}
 		pikachu->texture = frames_pikachu[currentFrame_pikachu];
-
 
 		// ANIMACION SPOINK
 		timer += GetFrameTime();
@@ -859,9 +851,7 @@ update_status ModuleGame::Update()
 			}
 		}
 
-
 		//spring movement
-
 		spoinkPos = spoink->joint->GetJointTranslation();
 
 		if (spoinkPos >= spoink->joint->GetUpperLimit() - 0.001f) {
@@ -897,9 +887,8 @@ update_status ModuleGame::Update()
 		}
 
 		//lives management
-
 		if (dead) {
-			if (cnt < 800){
+			if (cnt < 800 && player.lifes != 1){
 				PlaySound(deadSFX);
 				
 				if(cnt<=150 || cnt >= 450){
@@ -959,7 +948,7 @@ update_status ModuleGame::Update()
 		spoink->Update();
 
 		//text (scores) rendering
-
+		 
 		sprintf_s(cadena, "%d", player.actualScore);
 		DrawTextEx(font, cadena, { 410, 822}, 30,0, WHITE);
 
@@ -968,8 +957,6 @@ update_status ModuleGame::Update()
 		DrawTextEx(font, "BEST:", { 360, 808 }, 20, 0, YELLOW);
 
 		ball->Update();
-
-
 
 		break;
 
@@ -1005,6 +992,26 @@ update_status ModuleGame::Update()
 		PlayMusicStream(music);
 
 		state = State::INGAME;
+		break;
+
+	case State::WIN:
+
+		rubyBoard->Update();
+
+		DrawTexture(gameOver, 40, 400, WHITE);
+
+		if (cnt >= 20) {
+			DrawTextEx(font, "PRESS SPACE TO CONTINUE", { 100, 440 }, 25, 0, BLACK);
+		}
+		if (cnt >= 80) cnt = 0;
+		cnt++;
+
+		if (IsKeyPressed(KEY_SPACE)) {
+			state = State::SCORE;
+			player.lifes = 3;
+			cnt = 0;
+		}
+
 		break;
 	default:
 		break;
