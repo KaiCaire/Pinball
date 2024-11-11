@@ -841,8 +841,9 @@ update_status ModuleGame::Update()
 		spoink->texture = frames[currentFrame];
 
 		if (canImpulse) {
-
-			DrawTextEx(font, "Hold DOWN and Release DOWN to shot the ball", { 100, 440 }, 25, 0, BLACK);
+			
+			DrawRectangle(0, 440, 700, 25, WHITE);
+			DrawTextEx(font, "Hold/release DOWN arrow to shot!", { 100, 440 }, 25, 0, BLACK);
 
 			if (basicImpulser)
 			{
@@ -1043,6 +1044,7 @@ update_status ModuleGame::Update()
 		sprintf_s(cadena, "NEW RECORD : %d", player.actualScore);
 
 		if (cnt >= 20) {
+			
 			DrawTexture(frames_Win[0], 40, 400, WHITE);
 
 			DrawTextEx(font, cadena, { 120, 600 }, 35, 0, ORANGE);
