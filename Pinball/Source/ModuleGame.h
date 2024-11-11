@@ -98,6 +98,8 @@ public:
 	Texture2D palancaderSheet;
 	Texture2D palancaizqSheet;
 	Texture2D gameOver;
+	Texture2D ballSave;
+
 
 	Texture2D ContactFlipperLeft;
 	Texture2D ContactFlipperRight;
@@ -115,6 +117,7 @@ public:
 	Vector2 initBallPos = { 243 * 2, 250 * 2 };
 
 	int cnt = 0;
+	int cntAnimation = 0;
 	bool dead = false;
 
 	struct PlayerStats {

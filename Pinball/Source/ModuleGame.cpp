@@ -685,6 +685,11 @@ bool ModuleGame::Start()
 	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
 	gameOver = LoadTexture("Assets/Ruby/GAME OVER.png");
 
+	ballSave = LoadTexture("Assets/Ruby/ball_save.png");
+	ballSave.height = ballSave.height * 2;
+	ballSave.width = ballSave.width * 2;
+
+
 	ContactFlipperRight = LoadTexture("Assets/Ruby/ContactImpulserRight.png");
 	ContactFlipperRight.height = ContactFlipperRight.height * 2;
 	ContactFlipperRight.width = ContactFlipperRight.width * 2;
@@ -692,7 +697,6 @@ bool ModuleGame::Start()
 	ContactFlipperLeft = LoadTexture("Assets/Ruby/ContactImpulserLeft.png");
 	ContactFlipperLeft.height = ContactFlipperLeft.height * 2;
 	ContactFlipperLeft.width = ContactFlipperLeft.width * 2;
-
 
 	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
 	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
@@ -744,7 +748,6 @@ bool ModuleGame::Start()
 	pointsSFX = LoadSound("Assets/Ruby/Sounds/Another pling.WAV");
 	deadSFX = LoadSound("Assets/Ruby/Sounds/DOOoo.WAV");
 	impulserSFX = LoadSound("Assets/Ruby/Sounds/Do.WAV");
-
 
 	flipperFX = App->audio->LoadFx("Assets/Ruby/Sounds/flipperFX.mp3");
 	spoink_chargeSFX = App->audio->LoadFx("Assets/Ruby/Sounds/spoink_charge.wav");
@@ -832,7 +835,6 @@ update_status ModuleGame::Update()
 			{
 				if (IsKeyReleased(KEY_DOWN)) {
 					// Apply a force to the plunger when the space key is pressed
-					
 					b2Vec2 force(0.0f, -0.7f);
 					ball->ShootBall(force);
 					canImpulse = false;
@@ -897,15 +899,52 @@ update_status ModuleGame::Update()
 		//lives management
 
 		if (dead) {
-			ball->updatePosition();
-			
-			PlaySound(deadSFX);
-			player.lifes -= 1;
-			oneTime = false;
-			start = false;
-			blocker->changeColision(false);
-			dead = false;
+			if (cnt < 800){
+				PlaySound(deadSFX);
+				
+				if(cnt<=150 || cnt >= 450){
+					DrawTexture(ballSave, cntAnimation, 450, WHITE);
+					cntAnimation += 5;
+				}
+				else DrawTexture(ballSave, 150, 450, WHITE);
+				cnt+=5;
+			}
+			else 
+			{ 
+				ball->updatePosition();
+				player.lifes -= 1;
+				oneTime = false;
+				start = false;
+				blocker->changeColision(false);
+				dead = false;
+				cntAnimation = 0;
+				cnt = 0;
+			}
 		}
+		else
+		{
+			if (contactLeft && cnt < 12)
+			{
+				DrawTexture(ContactFlipperLeft, 130, 660, WHITE);
+				cnt++;
+			}
+			else if (!contactRight) {
+				cnt = 0;
+				contactLeft = false;
+			}
+
+			if (contactRight && cnt < 12)
+			{
+				DrawTexture(ContactFlipperRight, 305, 660, WHITE);
+				cnt++;
+			}
+			else if (!contactLeft) {
+				cnt = 0;
+				contactRight = false;
+			}
+		}
+
+
 		if (IsKeyPressed(KEY_A)) {
 			printf("%d, %d, \n", GetMouseX(), GetMouseY());
 		}
@@ -930,25 +969,7 @@ update_status ModuleGame::Update()
 
 		ball->Update();
 
-		if (contactLeft && cnt < 12)
-		{
-			DrawTexture(ContactFlipperLeft, 130, 660, WHITE);
-			cnt++;
-		}
-		else if (!contactRight) {
-			cnt = 0;
-			contactLeft = false;
-		}
 
-		if (contactRight && cnt < 12)
-		{
-			DrawTexture(ContactFlipperRight, 305, 660, WHITE);
-			cnt++;
-		}
-		else if (!contactLeft) {
-			cnt = 0;
-			contactRight = false;
-		}
 
 		break;
 
@@ -1012,9 +1033,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	if (dir == SpringImpulser || dir == PikachuImpulser || dir == Impulser){
 		canImpulse = true;
 		if (dir == PikachuImpulser || dir == Impulser) basicImpulser = true;
-
 	}
-
 
 	if (dir == LeftImpulser){
 		PlaySound(impulserSFX);
