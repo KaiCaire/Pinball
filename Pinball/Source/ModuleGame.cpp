@@ -105,8 +105,7 @@ private:
 class Board : public PhysicEntity
 {
 public:
-
-	static constexpr int board_circuit[100] =
+	static constexpr int board_circuit[108] =
 	{
 		240, 144,
 		187, 151,
@@ -131,6 +130,10 @@ public:
 		134, 804,
 		197, 838,
 		197, 848,
+		1, 844,
+		0, 2,
+		511, 1,
+		509, 844,
 		284, 848,
 		284, 840,
 		400, 769,
@@ -161,7 +164,7 @@ public:
 	};
 
 	Board(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, board_circuit, 98, b2_staticBody,1), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, board_circuit, 108, b2_staticBody,1), _listener)
 		, texture(_texture)
 	{
 
@@ -962,7 +965,7 @@ update_status ModuleGame::Update()
 		}
 
 
-		if (IsKeyPressed(KEY_A)) {
+		if (IsKeyReleased(KEY_A)) {
 			printf("%d, %d, \n", GetMouseX(), GetMouseY());
 		}
 
