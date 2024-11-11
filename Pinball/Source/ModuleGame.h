@@ -51,7 +51,7 @@ public:
 	bool CleanUp();
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir);
 
-	enum State{INGAME, DEAD, SCORE};
+	enum State{INGAME, DEAD, SCORE, WIN};
 public:
 
 	std::vector<PhysicEntity*> entities;
