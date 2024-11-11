@@ -57,15 +57,14 @@ public:
 	std::vector<PhysicEntity*> entities;
 	Music music;
 	Sound gameOverMusic;
+	Sound winMusic;
 	Sound pointsSFX;
 	Sound deadSFX;
 	Sound impulserSFX;
+
 	int flipperFX;
 	int spoink_chargeSFX;
 	int spoink_releaseSFX;
-
-	/*Music pointsSFX;
-	Music deadSFX;*/
 
 	int currentFrame = 0;
 	float frameTime = 0.15f;   // Duración de cada frame en segundos
@@ -76,6 +75,14 @@ public:
 	float frameTime_pikachu = 0.15f;   // Duración de cada frame en segundos
 	float timer_pikachu = 0.0f;
 	Texture2D frames_pikachu[2];
+
+	Texture2D frames_Win[2];
+
+	int currentFrames_latias = 1;
+	float framesTime_latias = 0.08f;   // Duración de cada frame en segundos
+	float timer_latias = 0.0f;
+	Texture2D frames_Latias[14];
+	bool backwards;
 
 	PhysBody* sensor;
 	PhysBody* sensorBlock;
@@ -129,7 +136,7 @@ public:
 	State state;
 
 	Font font;
-	char cadena[20];
+	char cadena[100];
 
 	bool start;
 	bool oneTime;

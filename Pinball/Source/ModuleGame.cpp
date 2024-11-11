@@ -63,7 +63,7 @@ public:
 	void updatePosition()
 	{
 		b2Vec2 pos;
-		pos.x = 9.8;
+		pos.x = 9.7;
 		pos.y = 10.0;
 
 		body->body->SetTransform(pos, 0.0f);
@@ -693,7 +693,9 @@ bool ModuleGame::Start()
 
 	spoink = new Spring(App->physics, 472, 775, this, spoinkSheet);
 
+
 	//CARGAR FRAMES DE LA ANIMACIÓN
+
 	frames[0] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
 	frames[1] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_3.png");
 	frames[2] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_4.png");
@@ -704,6 +706,14 @@ bool ModuleGame::Start()
 	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_2.png");
 	frames[7] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_3.png");
 
+	for (int z = 1;z < 14;z++)
+	{
+		sprintf_s(cadena, "Assets/Ruby/ball_save/ball_save_%d.png", z);
+		frames_Latias[z] = LoadTexture(cadena);
+		frames_Latias[z].height = frames_Latias[z].height * 2;
+		frames_Latias[z].width = frames_Latias[z].width * 2;
+	}
+
 
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 
@@ -711,15 +721,20 @@ bool ModuleGame::Start()
 	frames_pikachu[0] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_1.png");
 	frames_pikachu[1] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_2.png");
 	
+	frames_Win[0] = LoadTexture("Assets/Ruby/win_1.png");
+	frames_Win[0].height = frames_Win[0].height * 2;
+	frames_Win[0].width = frames_Win[0].width * 2;
+
+	frames_Win[1] = LoadTexture("Assets/Ruby/win_2.png");
+	frames_Win[1].height = frames_Win[1].height * 2;
+	frames_Win[1].width = frames_Win[1].width * 2;
 
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 
 	rFlip = new RightFlipper(App->physics, 280, 790, this, palancaderSheet);
 	lFlip = new LeftFlipper(App->physics, 200, 790, this, palancaizqSheet);
 
-
 	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
-	
 	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, Points); //Top points
 
 	blocker = new Block(App->physics, 198, 798, this, emptyBoard);
@@ -735,6 +750,8 @@ bool ModuleGame::Start()
 
 	music = LoadMusicStream("Assets/Ruby/Music Tracks/RedTableTrack.mp3");
 	gameOverMusic = LoadSound("Assets/Ruby/Music Tracks/Game Over.mp3");
+	winMusic = LoadSound("Assets/Ruby/Music Tracks/You Win.mp3");
+
 	pointsSFX = LoadSound("Assets/Ruby/Sounds/Another pling.WAV");
 	deadSFX = LoadSound("Assets/Ruby/Sounds/DOOoo.WAV");
 	impulserSFX = LoadSound("Assets/Ruby/Sounds/Do.WAV");
@@ -787,8 +804,6 @@ update_status ModuleGame::Update()
 		if (ball == NULL) {
 			ball = new Ball(App->physics, initBallPos.x, initBallPos.y, this, ballTex);
 		}
-
-		if(player.actualScore >= 1500) state = State::WIN;
 
 		//ANIMATION PIKACHU
 		timer_pikachu += GetFrameTime();
@@ -888,15 +903,28 @@ update_status ModuleGame::Update()
 
 		//lives management
 		if (dead) {
-			if (cnt < 800 && player.lifes != 1){
+			if (cnt < 1500 && player.lifes != 1){
 				PlaySound(deadSFX);
 				
-				if(cnt<=150 || cnt >= 450){
+				if (cnt<=150 || cnt >= 1200){
 					DrawTexture(ballSave, cntAnimation, 450, WHITE);
 					cntAnimation += 5;
 				}
-				else DrawTexture(ballSave, 150, 450, WHITE);
-				cnt+=5;
+				else
+				{
+					timer_latias += GetFrameTime();
+					if (timer_latias >= framesTime_latias)
+					{
+						timer_latias = 0.0f;
+						if(backwards)currentFrames_latias--;
+						else currentFrames_latias++;
+						if (currentFrames_latias >= 13) backwards = true;
+						else if (currentFrames_latias <= 2) backwards = false;	// Reinicia el ciclo
+						
+					}
+					DrawTexture(frames_Latias[currentFrames_latias], 150, 450, WHITE);
+				}
+				cnt +=5;
 			}
 			else 
 			{ 
@@ -939,9 +967,17 @@ update_status ModuleGame::Update()
 		}
 
 		if (player.lifes == 0) {
+
 			StopMusicStream(music);
-			PlaySound(gameOverMusic);
-			state = State::DEAD;
+
+			if(player.actualScore < player.bestScore){
+				PlaySound(gameOverMusic);
+				state = State::DEAD;
+			}
+			else {
+				PlaySound(winMusic);
+				state = State::WIN;
+			}
 		}
 
 		pikachu->Update();
@@ -998,15 +1034,24 @@ update_status ModuleGame::Update()
 
 		rubyBoard->Update();
 
-		DrawTexture(gameOver, 40, 400, WHITE);
+		sprintf_s(cadena, "NEW RECORD : %d", player.actualScore);
 
 		if (cnt >= 20) {
-			DrawTextEx(font, "PRESS SPACE TO CONTINUE", { 100, 440 }, 25, 0, BLACK);
+			DrawTexture(frames_Win[0], 40, 400, WHITE);
+
+			DrawTextEx(font, cadena, { 120, 600 }, 35, 0, ORANGE);
 		}
-		if (cnt >= 80) cnt = 0;
+		else{
+			DrawTexture(frames_Win[1], 40, 400, WHITE);
+
+			DrawTextEx(font, cadena, { 120, 600 }, 35, 0, YELLOW);
+		}
+
+		if (cnt >= 40) cnt = 0;
 		cnt++;
 
 		if (IsKeyPressed(KEY_SPACE)) {
+			StopSound(winMusic);
 			state = State::SCORE;
 			player.lifes = 3;
 			cnt = 0;
