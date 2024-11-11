@@ -841,7 +841,7 @@ update_status ModuleGame::Update()
 			}
 			else
 			{
-				if (IsKeyPressed(KEY_DOWN)){
+				if (IsKeyDown(KEY_DOWN)){
 					App->audio->PlayFx(spoink_chargeSFX);
 					changeAnimation = true;
 					spoink->joint->SetMotorSpeed(-0.5f);
