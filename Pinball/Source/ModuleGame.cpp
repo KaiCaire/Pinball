@@ -841,6 +841,9 @@ update_status ModuleGame::Update()
 		spoink->texture = frames[currentFrame];
 
 		if (canImpulse) {
+
+			DrawTextEx(font, "Hold DOWN and Release DOWN to shot the ball", { 100, 440 }, 25, 0, BLACK);
+
 			if (basicImpulser)
 			{
 				if (IsKeyReleased(KEY_DOWN)) {
@@ -1104,6 +1107,8 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 
 	else if (dir == Points) {
 		player.actualScore += 100;
+		canImpulse = false;
+		basicImpulser = false;
 		PlaySound(pointsSFX);
 	}
 	else if (dir == Dead) dead = true;
