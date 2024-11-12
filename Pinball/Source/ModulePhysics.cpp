@@ -15,7 +15,7 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 	debug = false;
 }
 
-//DESTRUCTOR
+// Destructor
 ModulePhysics::~ModulePhysics()
 {
 }
@@ -247,13 +247,13 @@ b2RevoluteJoint* ModulePhysics::CreateFlipper(PhysBody* bodyA, PhysBody* bodyB, 
 	def.enableMotor = true;
 	def.maxMotorTorque = 150.0f;
 	
-	if (anchor.x > PIXEL_TO_METERS(SCREEN_WIDTH/2)) { //RIGHT FLIPPER
+	if (anchor.x > PIXEL_TO_METERS(SCREEN_WIDTH/2)) { // Right flipper
 		def.upperAngle = 0.15f * b2_pi;
 		def.lowerAngle = -0.25f * b2_pi;
 		def.motorSpeed = 10.0f;
 
 	}
-	else { //LEFT FLIPPER
+	else { // Left flipper
 		def.upperAngle = 0.25f * b2_pi;
 		def.lowerAngle = -0.15f * b2_pi;
 		def.motorSpeed = -10.0f;
@@ -308,7 +308,7 @@ update_status ModulePhysics::PostUpdate()
 		{
 			switch (f->GetType())
 			{
-				// Draw circles ------------------------------------------------
+			// Draw circles ------------------------------------------------
 			case b2Shape::e_circle:
 			{
 				b2CircleShape* shape = (b2CircleShape*)f->GetShape();
