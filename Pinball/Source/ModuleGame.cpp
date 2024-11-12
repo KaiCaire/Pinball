@@ -977,6 +977,8 @@ update_status ModuleGame::Update()
 
 		rubyBoard->Update();
 		rubyObstacle->Update();
+		chikorita->Update();
+
 
 		if(start && !oneTime)
 		{ 
@@ -995,7 +997,6 @@ update_status ModuleGame::Update()
 			timer_pikachu = 0.0f;
 			currentFrame_pikachu++;
 			if (currentFrame_pikachu >= 2) currentFrame_pikachu = 0;	// Reinicia el ciclo
-
 		}
 		pikachu->texture = frames_pikachu[currentFrame_pikachu];
 
@@ -1201,7 +1202,6 @@ update_status ModuleGame::Update()
 						else currentFrames_latias++;
 						if (currentFrames_latias >= 13) backwards = true;
 						else if (currentFrames_latias <= 2) backwards = false;	// Reinicia el ciclo
-						
 					}
 					DrawTexture(frames_Latias[currentFrames_latias], 150, 450, WHITE);
 				}
@@ -1264,7 +1264,6 @@ update_status ModuleGame::Update()
 		chinchou3->Update();
 
 		makuhita->Update();
-		chikorita->Update();
 
 		//SCORES RENDER
 		sprintf_s(cadena, "%d", player.actualScore);
@@ -1347,7 +1346,6 @@ update_status ModuleGame::Update()
 		break;
 	}
 
-
 	DrawTexture(ballTex, 60, 825, WHITE);
 	sprintf_s(cadena, "%d", player.lifes);
 	DrawTextEx(font, cadena, { 80, 820 }, 25, 0, WHITE);
@@ -1400,7 +1398,6 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 
 	// Force to shoot the ball
 	ball->ShootBall(force);
-
 
 	bumper_hit = true;
 

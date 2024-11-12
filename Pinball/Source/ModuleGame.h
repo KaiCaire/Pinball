@@ -27,7 +27,6 @@ class PalancaIzq;
 class RightFlipper;
 class LeftFlipper;
 
-
 #define NoInteraction 1 
 
 #define LeftImpulser 2 
@@ -44,7 +43,6 @@ class LeftFlipper;
 #define Chinchou1Bumper 12
 #define Chinchou2Bumper 13
 #define Chinchou3Bumper 14
-
 
 class ModuleGame : public Module
 {
@@ -68,7 +66,6 @@ public:
 	Sound pointsSFX;
 	Sound deadSFX;
 	Sound impulserSFX;
-
 
 	int flipperFX;
 	int spoink_chargeSFX;
@@ -131,7 +128,6 @@ public:
 	Texture2D palancaizqSheet;
 	Texture2D gameOver;
 	Texture2D ballSave;
-
 
 	Texture2D ContactImpulserLeft;
 	Texture2D ContactImpulserRight;

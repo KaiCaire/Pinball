@@ -31,13 +31,11 @@ bool ModulePhysics::Start()
 	CreateScenarioGround();
 	ground = world->CreateBody(&bd);
 	
-
 	return true;
 }
 
 update_status ModulePhysics::PreUpdate()
 {
-
 	world->Step(1.0f / 60.0f, 6, 2);
 
 	for (b2Contact* c = world->GetContactList(); c; c = c->GetNext())
@@ -192,13 +190,10 @@ PhysBody* ModulePhysics::CreateBumper(int x, int y, int radius, b2BodyType bType
 	fixture.restitution = 1.5f;
 
 	b->CreateFixture(&fixture);
-
-
 	pbody->width = pbody->height = radius;
 
 	pbody->id = inf;
 	pbody->body = b;
-
 
 	return pbody;
 }
@@ -212,7 +207,6 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
 	
-
 	b2Body* b = world->CreateBody(&body);
 
 	b2ChainShape shape;
@@ -222,7 +216,6 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size, 
 	{
 		TraceLog(LOG_INFO, "%i", (points[i]));
 	}
-
 	for (int i = 0; i < size / 2; ++i)
 	{
 		p[i].x = PIXEL_TO_METERS(points[i * 2 + 0]);
@@ -258,14 +251,12 @@ b2RevoluteJoint* ModulePhysics::CreateFlipper(PhysBody* bodyA, PhysBody* bodyB, 
 		def.upperAngle = 0.15f * b2_pi;
 		def.lowerAngle = -0.25f * b2_pi;
 		def.motorSpeed = 10.0f;
-		
-		
+
 	}
 	else { // LEFT FLIPPER
 		def.upperAngle = 0.25f * b2_pi;
 		def.lowerAngle = -0.15f * b2_pi;
 		def.motorSpeed = -10.0f;
-
 	}
 	
 	b2RevoluteJoint* revJoint = (b2RevoluteJoint*)world->CreateJoint(&def);
@@ -273,7 +264,6 @@ b2RevoluteJoint* ModulePhysics::CreateFlipper(PhysBody* bodyA, PhysBody* bodyB, 
 }
 
 b2PrismaticJoint* ModulePhysics::CreateSpring(PhysBody* bodyA, PhysBody* bodyB, b2Vec2 axis) {
-
 
 	float scale = 2.0f;
 
@@ -293,19 +283,11 @@ b2PrismaticJoint* ModulePhysics::CreateSpring(PhysBody* bodyA, PhysBody* bodyB, 
 	//create & add to world
 	b2PrismaticJoint* prismaticJoint = (b2PrismaticJoint*)world->CreateJoint(&def);
 
-
-
 	return prismaticJoint;
-
 }
-
-
-
 
 update_status ModulePhysics::PostUpdate()
 {
-
-
 	if (IsKeyPressed(KEY_F1))
 	{
 		debug = !debug;
@@ -316,11 +298,9 @@ update_status ModulePhysics::PostUpdate()
 		return UPDATE_CONTINUE;
 	}
 
-
 	b2Body* mouseSelect = nullptr;
 	Vector2 mousePosition = GetMousePosition();
 	b2Vec2 pMousePosition = b2Vec2(PIXEL_TO_METERS(mousePosition.x), PIXEL_TO_METERS(mousePosition.y));
-
 
 	// Bonus code: this will iterate all objects in the world and draw the circles
 	// You need to provide your own macro to translate meters to pixels
@@ -399,8 +379,6 @@ update_status ModulePhysics::PostUpdate()
 					mouseSelect = b;
 				}
 			}
-
-
 		}
 	}
 
@@ -433,8 +411,6 @@ update_status ModulePhysics::PostUpdate()
 		world->DestroyJoint(mouse_joint);
 		mouse_joint = nullptr;
 	}
-
-
 	return UPDATE_CONTINUE;
 }
 
@@ -443,13 +419,9 @@ update_status ModulePhysics::PostUpdate()
 bool ModulePhysics::CleanUp()
 {
 	LOG("Destroying physics world");
-
 	// Delete the whole physics world!
-
-
 	return true;
 }
-
 
 void PhysBody::GetPhysicPosition(int& x, int& y) const
 {
