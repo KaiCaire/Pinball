@@ -754,6 +754,7 @@ bool ModuleGame::Start()
 	music = LoadMusicStream("Assets/Ruby/Music Tracks/RedTableTrack.mp3");
 	gameOverMusic = LoadSound("Assets/Ruby/Music Tracks/Game Over.mp3");
 	winMusic = LoadSound("Assets/Ruby/Music Tracks/You Win.mp3");
+	extraLifeSound = LoadSound("Assets/Ruby/Sounds/Dorodo.WAV");
 
 	pointsSFX = LoadSound("Assets/Ruby/Sounds/Another pling.WAV");
 	deadSFX = LoadSound("Assets/Ruby/Sounds/DOOoo.WAV");
@@ -762,6 +763,9 @@ bool ModuleGame::Start()
 	flipperFX = App->audio->LoadFx("Assets/Ruby/Sounds/flipperFX.mp3");
 	spoink_chargeSFX = App->audio->LoadFx("Assets/Ruby/Sounds/spoink_charge.wav");
 	spoink_releaseSFX = App->audio->LoadFx("Assets/Ruby/Sounds/spoink_release.wav");
+
+	SetMusicVolume(music, 0.4f);
+	SetSoundVolume(extraLifeSound, 2.0f);
 
 	if (music.stream.buffer == NULL) // Verifica que se haya cargado correctamente
 	{
@@ -845,7 +849,7 @@ update_status ModuleGame::Update()
 
 			if(textCounter == 0){
 				player.lifes += 1;
-				PlaySound(deadSFX);
+				PlaySound(extraLifeSound);
 			}
 			else if (textCounter <=25 || textCounter >= 50 && textCounter <= 75 || textCounter >= 100 && textCounter <= 125 || textCounter >= 150 && textCounter <= 175) 
 				DrawTextEx(font, "EXTRA LIFE!", { 150, 440 }, 35, 5, RED);
@@ -930,7 +934,7 @@ update_status ModuleGame::Update()
 		//lives management
 		if (dead) {
 			if (cnt < 1500 && player.lifes != 1){
-				PlaySound(deadSFX);
+				if(cnt == 0)PlaySound(deadSFX);
 				
 				//ANIMACIÓN DE APARACIÓN Y MOVIMIENTO DE LATIAS
 				if (cnt<=150 || cnt >= 1200){

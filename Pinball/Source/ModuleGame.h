@@ -38,8 +38,6 @@ class LeftFlipper;
 
 #define Dead 9
 
-
-
 class ModuleGame : public Module
 {
 public:
@@ -57,10 +55,12 @@ public:
 	std::vector<PhysicEntity*> entities;
 	Music music;
 	Sound gameOverMusic;
+	Sound extraLifeSound;
 	Sound winMusic;
 	Sound pointsSFX;
 	Sound deadSFX;
 	Sound impulserSFX;
+
 
 	int flipperFX;
 	int spoink_chargeSFX;
