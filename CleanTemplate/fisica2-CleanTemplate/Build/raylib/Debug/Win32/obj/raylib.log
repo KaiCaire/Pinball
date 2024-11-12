@@ -1,0 +1,10 @@
+﻿  raudio.c
+  rcore.c
+  rmodels.c
+  rglfw.c
+  rshapes.c
+  rtext.c
+  rtextures.c
+  utils.c
+  Generating Code...
+  raylib.vcxproj -> C:\Users\ccair\Documents\Programs\GitHub\Pinball\CleanTemplate\fisica2-CleanTemplate\Build\raylib\Debug\Win32\raylib.lib

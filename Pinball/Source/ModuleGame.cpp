@@ -538,6 +538,171 @@ private:
 	}
 };
 
+class Chinchou : public PhysicEntity {
+
+public:
+	Chinchou(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateBumper(_x + 29, _y + 20, 34, 25, b2_staticBody, ChinchouBumper), _listener)
+		, texture(_texture) {
+		width = 29;
+		height = 20;
+	}
+
+
+	void Update() override
+	{
+		if (hit) {
+
+		}
+
+		Vector2 position = GetColliderPosition();
+		float scale = 2.0f;
+
+		Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
+		Rectangle dest = { position.x, position.y - (float)(height), (float)texture.width * scale, (float)texture.height * scale };
+
+		Vector2 origin = GetTextureOrigin(); // Updated method to get the origin
+
+		float rotation = body->GetRotation() * RAD2DEG;
+
+		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
+	}
+
+	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
+	{
+		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
+	}
+
+	Timer hitTimer;
+	int hitTime = 10;
+
+	bool hit;
+	Texture2D texture;
+
+private:
+
+	int width;
+	int height;
+
+	Vector2 GetColliderPosition() const
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		return { (float)x, (float)y };
+	}
+
+	Vector2 GetTextureOrigin() const
+	{
+		// Adjust origin based on width and height to center the texture correctly
+		return { (float)(texture.width), (float)(texture.height / 2) };
+	}
+
+};
+
+class Makuhita : PhysicEntity {
+public:
+	Makuhita(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateRectangleSensor(_x + 29, _y + 35, 58, 70, b2_staticBody, NoInteraction), _listener)
+		, texture(_texture) {
+		width = 29;
+		height = 20;
+	}
+
+
+	void Update() override
+	{
+
+		Vector2 position = GetColliderPosition();
+		float scale = 2.0f;
+
+		Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
+		Rectangle dest = { position.x, position.y - (float)(height), (float)texture.width * scale, (float)texture.height * scale };
+
+		Vector2 origin = GetTextureOrigin(); // Updated method to get the origin
+
+		float rotation = body->GetRotation() * RAD2DEG;
+
+		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
+	}
+
+	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
+	{
+		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
+	}
+
+	Texture2D texture;
+
+private:
+
+	int width;
+	int height;
+
+	Vector2 GetColliderPosition() const
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		return { (float)x, (float)y };
+	}
+
+	Vector2 GetTextureOrigin() const
+	{
+		// Adjust origin based on width and height to center the texture correctly
+		return { (float)(texture.width), (float)(texture.height / 2) };
+	}
+};
+
+class Chikorita : PhysicEntity {
+public:
+	Chikorita(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateRectangleSensor(_x + 19, _y + 43, 38, 86, b2_staticBody, NoInteraction), _listener)
+		, texture(_texture) {
+		width = 19;
+		height = 20;
+	}
+
+
+	void Update() override
+	{
+
+		Vector2 position = GetColliderPosition();
+		float scale = 2.0f;
+
+		Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
+		Rectangle dest = { position.x, position.y - (float)(height), (float)texture.width * scale, (float)texture.height * scale };
+
+		Vector2 origin = GetTextureOrigin(); // Updated method to get the origin
+
+		float rotation = body->GetRotation() * RAD2DEG;
+
+		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
+	}
+
+	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
+	{
+		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
+	}
+
+	Texture2D texture;
+
+private:
+
+	int width;
+	int height;
+
+	Vector2 GetColliderPosition() const
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		return { (float)x, (float)y };
+	}
+
+	Vector2 GetTextureOrigin() const
+	{
+		// Adjust origin based on width and height to center the texture correctly
+		return { (float)(texture.width), (float)(texture.height / 2) };
+	}
+};
+
 class RightFlipper : public PhysicEntity
 {
 public:
@@ -679,6 +844,8 @@ bool ModuleGame::Start()
 	palancaderSheet = LoadTexture("Assets/Ruby/Right_Flipper.png");
 	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
 	gameOver = LoadTexture("Assets/Ruby/GAME OVER.png");
+	chinchouSheet = LoadTexture("Assets/Ruby/chinchou_sprite.png");
+	makuhitaSheet = LoadTexture("Assets/Ruby/makuhita_sheet.png");
 
 	ballSave = LoadTexture("Assets/Ruby/ball_save.png");
 	ballSave.height = ballSave.height * 2;
@@ -719,6 +886,30 @@ bool ModuleGame::Start()
 	frames_pikachu[0] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_1.png");
 	frames_pikachu[1] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_2.png");
 
+	chinchou1 = new Chinchou(App->physics, 292, 270, this, chinchouSheet);
+	chinchou2 = new Chinchou(App->physics, 256, 306, this, chinchouSheet);
+	chinchou3 = new Chinchou(App->physics, 308, 320, this, chinchouSheet);
+
+
+	//CARGAR FRAMES DE LA ANIMACIÓN DE CHINCHOU (IDLE)
+	frames_chinchou_idle[0] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_idle1.png");
+	frames_chinchou_idle[1] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_idle2.png");
+
+
+	//CARGAR FRAMES DE LA ANIMACIÓN DE CHINCHOU (HIT)
+	frames_chinchou_hit[0] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_hit1.png");
+	frames_chinchou_hit[1] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_hit2.png");
+
+	makuhita = new Makuhita(App->physics, 386, 546, this, makuhitaSheet);
+	//CARGAR FRAMES DE LA ANIMACIÓN DE MAKUHITA (IDLE)
+	frames_makuhita_idle[0] = LoadTexture("Assets/Ruby/makuhita_sheet/makuhita_idle1.png");
+	frames_makuhita_idle[1] = LoadTexture("Assets/Ruby/makuhita_sheet/makuhita_idle2.png");
+
+	chikorita = new Chikorita(App->physics, 110, 434, this, chikoritaSheet);
+	//CARGAR FRAMES DE LA ANIMACIÓN DE MAKUHITA (IDLE)
+	frames_chikorita_idle[0] = LoadTexture("Assets/Ruby/chikorita_sheet/chikorita_idle1.png");
+	frames_chikorita_idle[1] = LoadTexture("Assets/Ruby/chikorita_sheet/chikorita_idle2.png");
+
 	//CARGAR FRAMES DE LA ANIMACIÓN WIN Y AJSUTES DE TAMAÑO
 	frames_Win[0] = LoadTexture("Assets/Ruby/win_1.png");
 	frames_Win[0].height = frames_Win[0].height * 2;
@@ -758,11 +949,13 @@ bool ModuleGame::Start()
 
 	pointsSFX = LoadSound("Assets/Ruby/Sounds/Another pling.WAV");
 	deadSFX = LoadSound("Assets/Ruby/Sounds/DOOoo.WAV");
-	impulserSFX = LoadSound("Assets/Ruby/Sounds/Do.WAV");
+	impulserSFX = LoadSound("Assets/Ruby/Sounds/bumpers.wav");
 
 	flipperFX = App->audio->LoadFx("Assets/Ruby/Sounds/flipperFX.mp3");
 	spoink_chargeSFX = App->audio->LoadFx("Assets/Ruby/Sounds/spoink_charge.wav");
 	spoink_releaseSFX = App->audio->LoadFx("Assets/Ruby/Sounds/spoink_release.wav");
+
+	chinchou_hitSFX = App->audio->LoadFx("Assets/Ruby/Sounds/chinchou_hit.wav");
 
 	SetMusicVolume(music, 0.4f);
 	SetSoundVolume(extraLifeSound, 2.0f);
@@ -844,6 +1037,71 @@ update_status ModuleGame::Update()
 
 		spoink->texture = frames[currentFrame];
 
+
+		//ANIMATION CHINCHOU
+		timer_chinchou += GetFrameTime();
+		if (timer_chinchou >= frameTime_chinchou)
+		{
+			timer_chinchou = 0.0f;
+			currentFrame_chinchou++;
+			if (currentFrame_chinchou >= 2) currentFrame_chinchou = 0;	// Reinicia el ciclo
+
+		}
+
+
+		if (chinchou1->hit) {
+			chinchou1->texture = frames_chinchou_hit[currentFrame_chinchou];
+			if (chinchou1->hitTimer.ReadSec() >= chinchou1->hitTime) {
+				chinchou1->hit = false;
+			}
+		}
+		else {
+			chinchou1->texture = frames_chinchou_idle[currentFrame_chinchou];
+		}
+
+		if (chinchou2->hit) {
+			chinchou2->texture = frames_chinchou_hit[currentFrame_chinchou];
+			if (chinchou2->hitTimer.ReadSec() >= chinchou2->hitTime) {
+				chinchou2->hit = false;
+			}
+		}
+		else {
+			chinchou2->texture = frames_chinchou_idle[currentFrame_chinchou];
+		}
+
+		if (chinchou3->hit) {
+			chinchou3->texture = frames_chinchou_hit[currentFrame_chinchou];
+			if (chinchou3->hitTimer.ReadSec() >= chinchou3->hitTime) {
+				chinchou3->hit = false;
+			}
+		}
+		else {
+			chinchou3->texture = frames_chinchou_idle[currentFrame_chinchou];
+		}
+
+		//ANIMATION MAKUHITA
+		timer_makuhita += GetFrameTime();
+		if (timer_makuhita >= frameTime_makuhita)
+		{
+			timer_makuhita = 0.0f;
+			currentFrame_makuhita++;
+			if (currentFrame_makuhita >= 2) currentFrame_makuhita = 0;	// Reinicia el ciclo
+
+		}
+		makuhita->texture = frames_makuhita_idle[currentFrame_makuhita];
+
+		timer_chikorita += GetFrameTime();
+		if (timer_chikorita >= frameTime_chikorita)
+		{
+			timer_chikorita = 0.0f;
+			currentFrame_chikorita++;
+			if (currentFrame_chikorita >= 2) currentFrame_chikorita = 0;	// Reinicia el ciclo
+
+		}
+		chikorita->texture = frames_chikorita_idle[currentFrame_chikorita];
+
+
+
 		// RECOMPENSA POR PUNTUACIÓN
 		if (player.actualScore >= 100 && !extralife) {
 
@@ -865,13 +1123,13 @@ update_status ModuleGame::Update()
 		//TIPOS DE IMPULSO 
 		if (canImpulse) {
 			
-			DrawRectangle(0, 440, 700, 25, WHITE);
-			DrawTextEx(font, "Hold/release DOWN arrow to shot!", { 100, 440 }, 25, 0, BLACK);
+			/*DrawRectangle(0, 440, 700, 25, WHITE);
+			DrawTextEx(font, "Hold/release DOWN arrow to shoot!", { 100, 440 }, 25, 0, BLACK);*/
 
 			if (basicImpulser) //IMPULSORES LATERALES (PÌKACHU)
 			{
 				if (IsKeyReleased(KEY_DOWN)) {
-					// Apply a force to the plunger when the space key is pressed
+					// Apply a force to theK plunger when the space key is pressed
 					b2Vec2 force(0.0f, -0.7f);
 					ball->ShootBall(force);
 					canImpulse = false;
@@ -880,8 +1138,12 @@ update_status ModuleGame::Update()
 			}
 			else //IMPULSOR SPOINK
 			{
-				if (IsKeyDown(KEY_DOWN)){
+				if (IsKeyPressed(KEY_DOWN)) {
 					App->audio->PlayFx(spoink_chargeSFX);
+					//con IsKeyDown el sonido de cargar sonaba tras haber disparado
+				}
+
+				if (IsKeyDown(KEY_DOWN)){ 
 					changeAnimation = true;
 					spoink->joint->SetMotorSpeed(-0.5f);
 				}
@@ -1009,6 +1271,13 @@ update_status ModuleGame::Update()
 		pikachu->Update();
 		spoink->Update();
 
+		chinchou1->Update();
+		chinchou2->Update();
+		chinchou3->Update();
+
+		makuhita->Update();
+		chikorita->Update();
+
 		//SCORES RENDER
 		sprintf_s(cadena, "%d", player.actualScore);
 		DrawTextEx(font, cadena, { 410, 822}, 30,0, WHITE);
@@ -1095,6 +1364,11 @@ update_status ModuleGame::Update()
 	sprintf_s(cadena, "%d", player.lifes);
 	DrawTextEx(font, cadena, { 80, 820 }, 25, 0, WHITE);
 
+	if (canImpulse) {
+		DrawRectangle(0, 440, 700, 25, WHITE);
+		DrawTextEx(font, "Hold/release DOWN arrow to shoot!", { 100, 440 }, 25, 0, BLACK);
+	}
+
 	rFlip->Update();
 	lFlip->Update();
 
@@ -1143,6 +1417,26 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 
 	// Force to shoot the ball
 	ball->ShootBall(force);
+
+	if (bodyA->id == ChinchouBumper) {
+		App->audio->PlayFx(chinchou_hitSFX);
+		bumper_hit = true;
+
+		if (bodyA == (PhysBody*)chinchou1) {
+			chinchou1->hit = true;
+			chinchou1->hitTimer.Start();
+		}
+
+		if (bodyA == (PhysBody*)chinchou2) {
+			chinchou2->hit = true;
+			chinchou2->hitTimer.Start();
+		}
+
+		if (bodyA == (PhysBody*)chinchou3) {
+			chinchou3->hit = true;
+			chinchou3->hitTimer.Start();
+		}
+	}
 }
 
 // Load assets
@@ -1154,6 +1448,8 @@ bool ModuleGame::CleanUp()
 	UnloadTexture(ballTex);
 	UnloadTexture(spoinkSheet);
 	UnloadTexture(pikachuSheet);
+	UnloadTexture(makuhitaSheet);
+	UnloadTexture(chikoritaSheet);
 	UnloadTexture(ContactImpulserLeft);
 	UnloadTexture(ContactImpulserRight);
 	UnloadTexture(ballSave);
@@ -1161,6 +1457,10 @@ bool ModuleGame::CleanUp()
 	for (int z = 1;z < 14;z++) UnloadTexture(frames_Latias[z]);
 	for (int z = 0;z < 2;z++) UnloadTexture(frames_Win[z]);
 	for (int z = 0;z < 8;z++) UnloadTexture(frames[z]);
+	for (int z = 0; z < 2; z++) UnloadTexture(frames_chinchou_idle[z]);
+	for (int z = 0; z < 2; z++) UnloadTexture(frames_chinchou_hit[z]);
+	for (int z = 0; z < 2; z++) UnloadTexture(frames_makuhita_idle[z]);
+	for (int z = 0; z < 2; z++) UnloadTexture(frames_chikorita_idle[z]);
 
 	StopMusicStream(music);
 	UnloadMusicStream(music);
@@ -1169,6 +1469,11 @@ bool ModuleGame::CleanUp()
 	delete rubyBoard;
 	delete spoink;
 	delete pikachu;
+	delete chinchou1;
+	delete chinchou2;
+	delete chinchou3;
+	delete makuhita;
+	delete chikorita;
 	delete rFlip;
 	delete lFlip;
 

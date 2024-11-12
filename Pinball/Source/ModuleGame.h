@@ -15,6 +15,9 @@ class Ball;
 class Obstacle;
 class Spring;
 class Pikachu;
+class Chinchou;
+class Makuhita;
+class Chikorita;
 
 class Block;
 
@@ -37,6 +40,8 @@ class LeftFlipper;
 #define startBlocker 10
 
 #define Dead 9
+
+#define ChinchouBumper 11
 
 class ModuleGame : public Module
 {
@@ -65,6 +70,7 @@ public:
 	int flipperFX;
 	int spoink_chargeSFX;
 	int spoink_releaseSFX;
+	int chinchou_hitSFX;
 
 	int currentFrame = 0;
 	float frameTime = 0.15f;   // Duración de cada frame en segundos
@@ -83,6 +89,22 @@ public:
 	float timer_latias = 0.0f;
 	Texture2D frames_Latias[14];
 	bool backwards;
+
+	int currentFrame_chinchou = 0;
+	float frameTime_chinchou = 0.15f;   // Duración de cada frame en segundos
+	float timer_chinchou = 0.0f;
+	Texture2D frames_chinchou_idle[2];
+	Texture2D frames_chinchou_hit[2];
+
+	int currentFrame_makuhita = 0;
+	float frameTime_makuhita = 0.30f;   // Duración de cada frame en segundos
+	float timer_makuhita = 0.0f;
+	Texture2D frames_makuhita_idle[2];
+
+	int currentFrame_chikorita = 0;
+	float frameTime_chikorita = 0.35f;   // Duración de cada frame en segundos
+	float timer_chikorita = 0.0f;
+	Texture2D frames_chikorita_idle[2];
 
 	PhysBody* sensor;
 	PhysBody* sensorBlock;
@@ -117,11 +139,23 @@ public:
 	RightFlipper* rFlip;
 	LeftFlipper* lFlip;
 
+	Chinchou* chinchou1;
+	Chinchou* chinchou2;
+	Chinchou* chinchou3;
+
+	Makuhita* makuhita;
+	Chikorita* chikorita;
+
 	Block* blocker;
 
 	Texture2D pikachuSheet;
+	Texture2D chinchouSheet;
+	Texture2D makuhitaSheet;
+	Texture2D chikoritaSheet;
 
 	Vector2 initBallPos = { 243 * 2, 250 * 2 };
+
+	bool bumper_hit = false;
 
 	int cnt = 0;
 	int cntAnimation = 0;
