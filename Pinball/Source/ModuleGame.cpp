@@ -731,6 +731,7 @@ public:
 	}
 
 private:
+
 	Texture2D texture;
 	int width;
 	int height;
@@ -882,11 +883,11 @@ bool ModuleGame::Start()
 	frames_makuhita_idle[0] = LoadTexture("Assets/Ruby/makuhita_sheet/makuhita_idle1.png");
 	frames_makuhita_idle[1] = LoadTexture("Assets/Ruby/makuhita_sheet/makuhita_idle2.png");
 
-	//CARGAR FRAMES DE LA ANIMACIÓN DE MAKUHITA (IDLE)
+	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (CHIKORITA)
 	frames_chikorita_idle[0] = LoadTexture("Assets/Ruby/chikorita_sheet/chikorita_idle1.png");
 	frames_chikorita_idle[1] = LoadTexture("Assets/Ruby/chikorita_sheet/chikorita_idle2.png");
 
-	//CARGAR FRAMES DE LA ANIMACIÓN WIN Y AJSUTES DE TAMAÑO
+	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION AND SIZE ADJUSTMENT (WIN)
 	frames_Win[0] = LoadTexture("Assets/Ruby/win_1.png");
 	frames_Win[0].height = frames_Win[0].height * 2;
 	frames_Win[0].width = frames_Win[0].width * 2;
@@ -942,7 +943,7 @@ bool ModuleGame::Start()
 	SetMusicVolume(music, 0.4f);
 	SetSoundVolume(extraLifeSound, 2.0f);
 
-	if (music.stream.buffer == NULL) // Verifica que se haya cargado correctamente
+	if (music.stream.buffer == NULL) 
 	{
 		LOG("Error loading music stream");
 		ret = false;
@@ -952,7 +953,7 @@ bool ModuleGame::Start()
 		PlayMusicStream(music);
 	}
 	
-	if (gameOverMusic.stream.buffer == NULL) // Verifica que se haya cargado correctamente
+	if (gameOverMusic.stream.buffer == NULL)
 	{
 		LOG("Error loading gameOverMusic stream");
 		ret = false;
