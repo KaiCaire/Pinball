@@ -433,7 +433,7 @@ public:
 
 private:
 	Texture2D texture;
-	std::vector<PhysBody*> bodies; // Vector para almacenar los objetos
+	std::vector<PhysBody*> bodies; // Vector to hold objects
 
 
 	void CreateChain(ModulePhysics* physics, const int* circuit, int size, int _x, int _y, int i)
@@ -858,13 +858,13 @@ bool ModuleGame::Start()
 	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_2.png");
 	frames[7] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_3.png");
 
-	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (LATIAS)
+	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (LATIOS)
 	for (int z = 1;z < 14;z++)
 	{
 		sprintf_s(cadena, "Assets/Ruby/ball_save/ball_save_%d.png", z);
-		frames_Latias[z] = LoadTexture(cadena);
-		frames_Latias[z].height = frames_Latias[z].height * 2;
-		frames_Latias[z].width = frames_Latias[z].width * 2;
+		frames_Latios[z] = LoadTexture(cadena);
+		frames_Latios[z].height = frames_Latios[z].height * 2;
+		frames_Latios[z].width = frames_Latios[z].width * 2;
 	}
 
 	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (PIKACHU)
@@ -998,7 +998,7 @@ update_status ModuleGame::Update()
 		}
 		pikachu->texture = frames_pikachu[currentFrame_pikachu];
 
-		// ANIMAtION SPOINK
+		// ANIMATION SPOINK
 		timer += GetFrameTime();
 
 		if(!changeAnimation) {
@@ -1186,23 +1186,23 @@ update_status ModuleGame::Update()
 			if (cnt < 1500 && player.lifes != 1){
 				if(cnt == 0)PlaySound(deadSFX);
 				
-				//ANIMACIÓN DE APARACIÓN Y MOVIMIENTO DE LATIAS
+				//LATIOS ANIMATION AND TRIGGER
 				if (cnt<=150 || cnt >= 1200){
 					DrawTexture(ballSave, cntAnimation, 450, WHITE);
 					cntAnimation += 5;
 				}
 				else
 				{
-					timer_latias += GetFrameTime();
-					if (timer_latias >= framesTime_latias)
+					timer_latios += GetFrameTime();
+					if (timer_latios >= framesTime_latios)
 					{
-						timer_latias = 0.0f;
-						if(backwards)currentFrames_latias--;
-						else currentFrames_latias++;
-						if (currentFrames_latias >= 13) backwards = true;
-						else if (currentFrames_latias <= 2) backwards = false;	// Reinicia el ciclo
+						timer_latios = 0.0f;
+						if(backwards)currentFrames_latios--;
+						else currentFrames_latios++;
+						if (currentFrames_latios >= 13) backwards = true;
+						else if (currentFrames_latios <= 2) backwards = false;	// Restart cicle
 					}
-					DrawTexture(frames_Latias[currentFrames_latias], 150, 450, WHITE);
+					DrawTexture(frames_Latios[currentFrames_latios], 150, 450, WHITE);
 				}
 				cnt +=5;
 			}
@@ -1218,7 +1218,7 @@ update_status ModuleGame::Update()
 				cnt = 0;
 			}
 		}
-		else // BLOQUES DE IMPULSO 
+		else //IMPULSER BLOCK 
 		{
 			if (contactLeft && cnt < 12)
 			{
@@ -1318,8 +1318,9 @@ update_status ModuleGame::Update()
 
 		sprintf_s(cadena, "NEW RECORD : %d", player.actualScore);
 
-		//PARPADEO TEXTO
-		if (cnt >= 20) {
+		//TEXT ANIMATION
+		if (cnt >= 20) 
+		{
 			
 			DrawTexture(frames_Win[0], 40, 400, WHITE);
 
@@ -1345,6 +1346,7 @@ update_status ModuleGame::Update()
 	default:
 		break;
 	}
+
 	//LIFES RENDER 
 	DrawTexture(ballTex, 60, 825, WHITE);
 	sprintf_s(cadena, "%d", player.lifes);
@@ -1436,7 +1438,7 @@ bool ModuleGame::CleanUp()
 	UnloadTexture(ContactImpulserRight);
 	UnloadTexture(ballSave);
 
-	for (int z = 1;z < 14;z++) UnloadTexture(frames_Latias[z]);
+	for (int z = 1;z < 14;z++) UnloadTexture(frames_Latios[z]);
 	for (int z = 0;z < 2;z++) UnloadTexture(frames_Win[z]);
 	for (int z = 0;z < 8;z++) UnloadTexture(frames[z]);
 	for (int z = 0; z < 2; z++) UnloadTexture(frames_chinchou_idle[z]);

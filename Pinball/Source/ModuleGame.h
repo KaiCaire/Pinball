@@ -73,36 +73,36 @@ public:
 	int chinchou_hitSFX;
 
 	int currentFrame = 0;
-	float frameTime = 0.15f;   // Duración de cada frame en segundos
+	float frameTime = 0.15f;   // Frame time in seconds
 	float timer = 0.0f;
 	Texture2D frames[8];
 
 	int currentFrame_pikachu = 0;
-	float frameTime_pikachu = 0.15f;   // Duración de cada frame en segundos
+	float frameTime_pikachu = 0.15f;   // Frame time in seconds
 	float timer_pikachu = 0.0f;
 	Texture2D frames_pikachu[2];
 
 	Texture2D frames_Win[2];
 
-	int currentFrames_latias = 1;
-	float framesTime_latias = 0.08f;   // Duración de cada frame en segundos
-	float timer_latias = 0.0f;
-	Texture2D frames_Latias[14];
+	int currentFrames_latios = 1;
+	float framesTime_latios = 0.08f;   // Frame time in seconds
+	float timer_latios = 0.0f;
+	Texture2D frames_Latios[14];
 	bool backwards;
 
 	int currentFrame_chinchou = 0;
-	float frameTime_chinchou = 0.15f;   // Duración de cada frame en segundos
+	float frameTime_chinchou = 0.15f;   // Frame time in seconds
 	float timer_chinchou = 0.0f;
 	Texture2D frames_chinchou_idle[2];
 	Texture2D frames_chinchou_hit[2];
 
 	int currentFrame_makuhita = 0;
-	float frameTime_makuhita = 0.30f;   // Duración de cada frame en segundos
+	float frameTime_makuhita = 0.30f;   // Frame time in seconds
 	float timer_makuhita = 0.0f;
 	Texture2D frames_makuhita_idle[2];
 
 	int currentFrame_chikorita = 0;
-	float frameTime_chikorita = 0.35f;   // Duración de cada frame en segundos
+	float frameTime_chikorita = 0.35f;   // Frame time in seconds
 	float timer_chikorita = 0.0f;
 	Texture2D frames_chikorita_idle[2];
 

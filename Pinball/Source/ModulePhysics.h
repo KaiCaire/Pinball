@@ -8,8 +8,8 @@
 #define GRAVITY_X 0.0f
 #define GRAVITY_Y -0.6f
 
-#define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
-#define METER_PER_PIXEL 0.02f // this is 1 / PIXELS_PER_METER !
+#define PIXELS_PER_METER 50.0f // If touched change METER_PER_PIXEL too
+#define METER_PER_PIXEL 0.02f // This is 1 / PIXELS_PER_METER !
 
 #define METERS_TO_PIXELS(m) ((int) floor(PIXELS_PER_METER * m))
 #define PIXEL_TO_METERS(p)  ((float) METER_PER_PIXEL * p)
@@ -21,7 +21,7 @@ class PhysBody
 public:
 	PhysBody() : listener(NULL), body(NULL) {}
 
-	//void GetPosition(int& x, int& y) const;
+	// Void GetPosition(int& x, int& y) const;
 	void GetPhysicPosition(int& x, int& y) const;
 	float GetRotation() const;
 	bool Contains(int x, int y) const;
@@ -35,7 +35,7 @@ public:
 };
 
 
-class ModulePhysics : public Module, public b2ContactListener // TODO
+class ModulePhysics : public Module, public b2ContactListener
 {
 public:
 	ModulePhysics(Application* app, bool start_enabled = true);

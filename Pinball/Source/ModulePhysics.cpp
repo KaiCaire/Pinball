@@ -15,7 +15,7 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 	debug = false;
 }
 
-// DESTRUCTOR
+//DESTRUCTOR
 ModulePhysics::~ModulePhysics()
 {
 }
@@ -247,13 +247,13 @@ b2RevoluteJoint* ModulePhysics::CreateFlipper(PhysBody* bodyA, PhysBody* bodyB, 
 	def.enableMotor = true;
 	def.maxMotorTorque = 150.0f;
 	
-	if (anchor.x > PIXEL_TO_METERS(SCREEN_WIDTH/2)) { // RIGHT FLIPPER
+	if (anchor.x > PIXEL_TO_METERS(SCREEN_WIDTH/2)) { //RIGHT FLIPPER
 		def.upperAngle = 0.15f * b2_pi;
 		def.lowerAngle = -0.25f * b2_pi;
 		def.motorSpeed = 10.0f;
 
 	}
-	else { // LEFT FLIPPER
+	else { //LEFT FLIPPER
 		def.upperAngle = 0.25f * b2_pi;
 		def.lowerAngle = -0.15f * b2_pi;
 		def.motorSpeed = -10.0f;
@@ -267,20 +267,20 @@ b2PrismaticJoint* ModulePhysics::CreateSpring(PhysBody* bodyA, PhysBody* bodyB, 
 
 	float scale = 2.0f;
 
-	//define prismatic joint
+	// Define prismatic joint
 	b2PrismaticJointDef def;
 	def.bodyA = bodyB->body;
 	def.bodyB = bodyA->body;
 	def.localAnchorA.Set(0, 0);
 	def.localAnchorB.Set(0, 0);
 	def.upperTranslation = 1.5f; 
-	def.lowerTranslation = -1.5f; // how far does the spring extend
+	def.lowerTranslation = -1.5f; // How far does the spring extend
 	def.enableLimit = true;
 	def.localAxisA.Set(axis.x, axis.y);
 	def.enableMotor = true;
 	def.maxMotorForce = 200.0f;
 
-	//create & add to world
+	// Create & add to world
 	b2PrismaticJoint* prismaticJoint = (b2PrismaticJoint*)world->CreateJoint(&def);
 
 	return prismaticJoint;
