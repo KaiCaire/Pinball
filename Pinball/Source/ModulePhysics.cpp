@@ -171,7 +171,7 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateBumper(int x, int y, int width, int height, b2BodyType bType, int inf)
+PhysBody* ModulePhysics::CreateBumper(int x, int y, int radius, b2BodyType bType, int inf)
 {
 	PhysBody* pbody = new PhysBody();
 
@@ -181,15 +181,18 @@ PhysBody* ModulePhysics::CreateBumper(int x, int y, int width, int height, b2Bod
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
 
 	b2Body* b = world->CreateBody(&body);
-	b2PolygonShape box;
-	box.SetAsBox(PIXEL_TO_METERS(width) * 0.5f, PIXEL_TO_METERS(height) * 0.5f);
 
+	b2CircleShape shape;
+	shape.m_radius = PIXEL_TO_METERS(radius);
 	b2FixtureDef fixture;
-	fixture.shape = &box;
+	fixture.shape = &shape;
 	fixture.density = 1.0f;
-	fixture.restitution = 1.0f;
+	fixture.restitution = 1.5f;
 
 	b->CreateFixture(&fixture);
+
+
+	pbody->width = pbody->height = radius;
 
 	pbody->id = inf;
 	pbody->body = b;

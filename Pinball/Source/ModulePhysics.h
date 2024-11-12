@@ -54,7 +54,7 @@ public:
 	PhysBody* CreateChain(int x, int y, const int* points, int size, b2BodyType bType, int inf);
 	b2RevoluteJoint* CreateFlipper(PhysBody* bodyA, PhysBody* bodyB, b2Vec2 anchor);
 	b2PrismaticJoint* CreateSpring(PhysBody* bodyA, PhysBody* bodyB, b2Vec2 axis);
-	PhysBody* CreateBumper(int x, int y, int width, int height, b2BodyType bType, int inf);
+	PhysBody* CreateBumper(int x, int y, int radius, b2BodyType bType, int inf);
 
 	void BeginContact(b2Contact* contact);
 	bool debug = false;

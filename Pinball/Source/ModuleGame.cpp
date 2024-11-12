@@ -542,7 +542,7 @@ class Chinchou : public PhysicEntity {
 
 public:
 	Chinchou(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateBumper(_x + 29, _y + 20, 34, 25, b2_staticBody, ChinchouBumper), _listener)
+		: PhysicEntity(physics->CreateBumper(_x + 29, _y + 20, 15, b2_staticBody, ChinchouBumper), _listener)
 		, texture(_texture) {
 		width = 29;
 		height = 20;
@@ -886,9 +886,9 @@ bool ModuleGame::Start()
 	frames_pikachu[0] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_1.png");
 	frames_pikachu[1] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_2.png");
 
-	chinchou1 = new Chinchou(App->physics, 292, 270, this, chinchouSheet);
-	chinchou2 = new Chinchou(App->physics, 256, 306, this, chinchouSheet);
-	chinchou3 = new Chinchou(App->physics, 308, 320, this, chinchouSheet);
+	chinchou1 = new Chinchou(App->physics, 288, 262, this, chinchouSheet);
+	chinchou2 = new Chinchou(App->physics, 244, 306, this, chinchouSheet);
+	chinchou3 = new Chinchou(App->physics, 304, 320, this, chinchouSheet);
 
 
 	//CARGAR FRAMES DE LA ANIMACIÓN DE CHINCHOU (IDLE)
