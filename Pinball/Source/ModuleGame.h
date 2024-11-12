@@ -181,4 +181,7 @@ public:
 
 	bool extralife = false;
 	int textCounter;
+
+	vec2<int> ray;
+	bool ray_on;
 };

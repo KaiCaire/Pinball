@@ -26,7 +26,11 @@ bool ModulePhysics::Start()
 	world = new b2World(b2Vec2(GRAVITY_X, -GRAVITY_Y));
 	world->SetContactListener(this);
 
-	// big static circle as "ground" in the middle of the screen
+	b2BodyDef bd;
+
+	CreateScenarioGround();
+	ground = world->CreateBody(&bd);
+	
 
 	return true;
 }
@@ -82,6 +86,33 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType bType
 	pbody->width = pbody->height = radius;
 
 	return pbody;
+}
+
+void ModulePhysics::CreateScenarioGround()
+{
+	// Get coordinates of the screen center and radius
+	int x = SCREEN_WIDTH * 2;
+	int y = SCREEN_HEIGHT / 1.5f;
+	int diameter = SCREEN_WIDTH / 2;
+
+	// Create a static body in the middle of the screen
+	b2BodyDef body;
+	body.type = b2_staticBody;
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
+	// Add this static body to the World
+	b2Body* big_ball = world->CreateBody(&body);
+
+	// Create a big circle shape
+	b2CircleShape shape;
+	shape.m_radius = PIXEL_TO_METERS(diameter) * 0.5f;
+
+	// Create a fixture and associate the circle to it
+	b2FixtureDef fixture;
+	fixture.shape = &shape;
+
+	// Add the ficture (plus shape) to the static body
+	big_ball->CreateFixture(&fixture);
 }
 
 PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2BodyType bType, int inf)
@@ -280,6 +311,12 @@ update_status ModulePhysics::PostUpdate()
 		return UPDATE_CONTINUE;
 	}
 
+
+	b2Body* mouseSelect = nullptr;
+	Vector2 mousePosition = GetMousePosition();
+	b2Vec2 pMousePosition = b2Vec2(PIXEL_TO_METERS(mousePosition.x), PIXEL_TO_METERS(mousePosition.y));
+
+
 	// Bonus code: this will iterate all objects in the world and draw the circles
 	// You need to provide your own macro to translate meters to pixels
 	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext())
@@ -351,8 +388,45 @@ update_status ModulePhysics::PostUpdate()
 			break;
 			}
 
+			if (mouse_joint == nullptr && mouseSelect == nullptr && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+
+				if (f->TestPoint(pMousePosition)) {
+					mouseSelect = b;
+				}
+			}
+
 
 		}
+	}
+
+	if (mouseSelect) {
+		b2MouseJointDef def;
+
+		def.bodyA = ground;
+		def.bodyB = mouseSelect;
+		def.target = pMousePosition;
+		def.damping = 0.5f;
+		def.stiffness = 20.f;
+		def.maxForce = 100.f * mouseSelect->GetMass();
+
+		mouse_joint = (b2MouseJoint*)world->CreateJoint(&def);
+	}
+
+	// TODO 3: If the player keeps pressing the mouse button, update
+	// target position and draw a red line between both anchor points
+	else if (mouse_joint && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+		mouse_joint->SetTarget(pMousePosition);
+		b2Vec2 anchorPosition = mouse_joint->GetBodyB()->GetPosition();
+		anchorPosition.x = METERS_TO_PIXELS(anchorPosition.x);
+		anchorPosition.y = METERS_TO_PIXELS(anchorPosition.y);
+
+		DrawLine(anchorPosition.x, anchorPosition.y, mousePosition.x, mousePosition.y, RED);
+	}
+
+	// TODO 4: If the player releases the mouse button, destroy the joint
+	else if (mouse_joint && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+		world->DestroyJoint(mouse_joint);
+		mouse_joint = nullptr;
 	}
 
 

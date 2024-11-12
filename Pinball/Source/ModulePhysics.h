@@ -48,6 +48,7 @@ public:
 	bool CleanUp();
 
 	PhysBody* CreateCircle(int x, int y, int radius, b2BodyType bType);
+	void CreateScenarioGround();
 	PhysBody* CreateRectangle(int x, int y, int width, int height, b2BodyType bType, int inf);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, b2BodyType bType, int inf);
 	PhysBody* CreateChain(int x, int y, const int* points, int size, b2BodyType bType, int inf);
@@ -62,5 +63,7 @@ public:
 
 private:
 	b2World* world;
+	b2MouseJoint* mouse_joint;
+	b2Body* ground;
 
 };
