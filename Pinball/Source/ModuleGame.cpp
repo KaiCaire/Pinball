@@ -831,7 +831,7 @@ bool ModuleGame::Start()
 	ballTex = LoadTexture("Assets/Ruby/temp ball.png");
 	gameOver = LoadTexture("Assets/Ruby/GAME OVER.png");
 	chinchouSheet = LoadTexture("Assets/Ruby/chinchou_sprite.png");
-	makuhitaSheet = LoadTexture("Assets/Ruby/makuhita_sheet.png");
+	makuhitaSheet = LoadTexture("Assets/Ruby/makuhita_sheet/makuhita_idle1.png");
 
 	ballSave = LoadTexture("Assets/Ruby/ball_save.png");
 	ballSave.height = ballSave.height * 2;
@@ -877,7 +877,6 @@ bool ModuleGame::Start()
 	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (CHINCHOU HIT)
 	frames_chinchou_hit[0] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_hit1.png");
 	frames_chinchou_hit[1] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_hit2.png");
-
 
 	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (MAKUHITA)
 	frames_makuhita_idle[0] = LoadTexture("Assets/Ruby/makuhita_sheet/makuhita_idle1.png");
@@ -1091,8 +1090,8 @@ update_status ModuleGame::Update()
 		}
 		chikorita->texture = frames_chikorita_idle[currentFrame_chikorita];
 
-		// RECOMPENSA POR PUNTUACIÓN
-		if (player.actualScore >= 100 && !extralife) {
+		// PUNTUATION REWARDS
+		if (player.actualScore >= 1000 && !extralife) {
 
 			if(textCounter == 0){
 				player.lifes += 1;
@@ -1109,7 +1108,7 @@ update_status ModuleGame::Update()
 			textCounter++;
 		}
 
-		//TIPOS DE IMPULSO 
+		//IMPULSER TYPES
 		if (canImpulse) {
 			
 			DrawRectangle(0, 440, 700, 25, WHITE);
