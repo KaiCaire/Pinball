@@ -41,7 +41,10 @@ class LeftFlipper;
 
 #define Dead 9
 
-#define ChinchouBumper 11
+#define Chinchou1Bumper 12
+#define Chinchou2Bumper 13
+#define Chinchou3Bumper 14
+
 
 class ModuleGame : public Module
 {

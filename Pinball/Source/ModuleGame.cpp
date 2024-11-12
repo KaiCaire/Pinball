@@ -457,12 +457,9 @@ public:
 		: PhysicEntity(physics->CreateRectangle(_x, _y, 40, 80, b2_dynamicBody, SpringImpulser), _listener)
 		, texture(_texture)
 	{
-		
 		bodyA = this->body;
 		bodyB = physics->CreateRectangle(_x + 15, _y + bodyA->height, 40, 10, b2_staticBody, SpringImpulser);
 		joint = physics->CreateSpring(bodyA, bodyB, axis);
-		
-	
 	}
 
 	void Update() override
@@ -541,20 +538,14 @@ private:
 class Chinchou : public PhysicEntity {
 
 public:
-	Chinchou(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateBumper(_x + 29, _y + 20, 15, b2_staticBody, ChinchouBumper), _listener)
-		, texture(_texture) {
+	Chinchou(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture,int id)
+		: PhysicEntity(physics->CreateBumper(_x + 29, _y + 20, 15, b2_staticBody, id), _listener), texture(_texture) {
 		width = 29;
 		height = 20;
 	}
 
-
 	void Update() override
 	{
-		if (hit) {
-
-		}
-
 		Vector2 position = GetColliderPosition();
 		float scale = 2.0f;
 
@@ -596,7 +587,6 @@ private:
 		// Adjust origin based on width and height to center the texture correctly
 		return { (float)(texture.width), (float)(texture.height / 2) };
 	}
-
 };
 
 class Makuhita : PhysicEntity {
@@ -607,7 +597,6 @@ public:
 		width = 29;
 		height = 20;
 	}
-
 
 	void Update() override
 	{
@@ -659,7 +648,6 @@ public:
 		width = 19;
 		height = 20;
 	}
-
 
 	void Update() override
 	{
@@ -721,8 +709,6 @@ public:
 		rightAnchor = physics->CreateRectangle(305, 790, 1, 1, b2_staticBody, NoInteraction);
 		revJoint = physics->CreateFlipper(this->body, rightAnchor, b2Vec2(rightAnchor->body->GetPosition()));
 	}
-	//bool rotate = false;
-	//int x = 7;
 
 	void Update() override
 	{
@@ -859,7 +845,6 @@ bool ModuleGame::Start()
 	ContactImpulserLeft.height = ContactImpulserLeft.height * 2;
 	ContactImpulserLeft.width = ContactImpulserLeft.width * 2;
 
-
 	//CARGAR FRAMES DE LA ANIMACIÓN
 	frames[0] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
 	frames[1] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_3.png");
@@ -879,17 +864,15 @@ bool ModuleGame::Start()
 		frames_Latias[z].width = frames_Latias[z].width * 2;
 	}
 
-
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 
 	//CARGAR FRAMES DE LA ANIMACIÓN PIKACHU
 	frames_pikachu[0] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_1.png");
 	frames_pikachu[1] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_2.png");
 
-	chinchou1 = new Chinchou(App->physics, 288, 262, this, chinchouSheet);
-	chinchou2 = new Chinchou(App->physics, 244, 306, this, chinchouSheet);
-	chinchou3 = new Chinchou(App->physics, 304, 320, this, chinchouSheet);
-
+	chinchou1 = new Chinchou(App->physics, 292, 270, this, chinchouSheet, Chinchou1Bumper);
+	chinchou2 = new Chinchou(App->physics, 256, 306, this, chinchouSheet, Chinchou2Bumper);
+	chinchou3 = new Chinchou(App->physics, 308, 320, this, chinchouSheet, Chinchou3Bumper);
 
 	//CARGAR FRAMES DE LA ANIMACIÓN DE CHINCHOU (IDLE)
 	frames_chinchou_idle[0] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_idle1.png");
@@ -1037,22 +1020,23 @@ update_status ModuleGame::Update()
 
 		spoink->texture = frames[currentFrame];
 
-
 		//ANIMATION CHINCHOU
 		timer_chinchou += GetFrameTime();
 		if (timer_chinchou >= frameTime_chinchou)
 		{
 			timer_chinchou = 0.0f;
 			currentFrame_chinchou++;
-			if (currentFrame_chinchou >= 2) currentFrame_chinchou = 0;	// Reinicia el ciclo
-
+			if (currentFrame_chinchou >= 2)currentFrame_chinchou = 0;
+			// Reinicia el ciclo
 		}
-
 
 		if (chinchou1->hit) {
 			chinchou1->texture = frames_chinchou_hit[currentFrame_chinchou];
-			if (chinchou1->hitTimer.ReadSec() >= chinchou1->hitTime) {
-				chinchou1->hit = false;
+
+			cntAnimation++;
+			if (cntAnimation == 35){
+				chinchou1->hit= false;
+				cntAnimation = 0;
 			}
 		}
 		else {
@@ -1061,8 +1045,11 @@ update_status ModuleGame::Update()
 
 		if (chinchou2->hit) {
 			chinchou2->texture = frames_chinchou_hit[currentFrame_chinchou];
-			if (chinchou2->hitTimer.ReadSec() >= chinchou2->hitTime) {
+
+			cntAnimation++;
+			if (cntAnimation == 35) {
 				chinchou2->hit = false;
+				cntAnimation = 0;
 			}
 		}
 		else {
@@ -1071,8 +1058,11 @@ update_status ModuleGame::Update()
 
 		if (chinchou3->hit) {
 			chinchou3->texture = frames_chinchou_hit[currentFrame_chinchou];
-			if (chinchou3->hitTimer.ReadSec() >= chinchou3->hitTime) {
+
+			cntAnimation++;
+			if (cntAnimation == 35) {
 				chinchou3->hit = false;
+				cntAnimation = 0;
 			}
 		}
 		else {
@@ -1100,8 +1090,6 @@ update_status ModuleGame::Update()
 		}
 		chikorita->texture = frames_chikorita_idle[currentFrame_chikorita];
 
-
-
 		// RECOMPENSA POR PUNTUACIÓN
 		if (player.actualScore >= 100 && !extralife) {
 
@@ -1123,8 +1111,8 @@ update_status ModuleGame::Update()
 		//TIPOS DE IMPULSO 
 		if (canImpulse) {
 			
-			/*DrawRectangle(0, 440, 700, 25, WHITE);
-			DrawTextEx(font, "Hold/release DOWN arrow to shoot!", { 100, 440 }, 25, 0, BLACK);*/
+			DrawRectangle(0, 440, 700, 25, WHITE);
+			DrawTextEx(font, "Hold/release DOWN arrow to shoot!", { 100, 440 }, 25, 0, BLACK);
 
 			if (basicImpulser) //IMPULSORES LATERALES (PÌKACHU)
 			{
@@ -1364,11 +1352,6 @@ update_status ModuleGame::Update()
 	sprintf_s(cadena, "%d", player.lifes);
 	DrawTextEx(font, cadena, { 80, 820 }, 25, 0, WHITE);
 
-	if (canImpulse) {
-		DrawRectangle(0, 440, 700, 25, WHITE);
-		DrawTextEx(font, "Hold/release DOWN arrow to shoot!", { 100, 440 }, 25, 0, BLACK);
-	}
-
 	rFlip->Update();
 	lFlip->Update();
 
@@ -1418,25 +1401,24 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 	// Force to shoot the ball
 	ball->ShootBall(force);
 
-	if (bodyA->id == ChinchouBumper) {
+
+	bumper_hit = true;
+
+	if (dir == Chinchou1Bumper) {
 		App->audio->PlayFx(chinchou_hitSFX);
-		bumper_hit = true;
-
-		if (bodyA == (PhysBody*)chinchou1) {
-			chinchou1->hit = true;
-			chinchou1->hitTimer.Start();
-		}
-
-		if (bodyA == (PhysBody*)chinchou2) {
-			chinchou2->hit = true;
-			chinchou2->hitTimer.Start();
-		}
-
-		if (bodyA == (PhysBody*)chinchou3) {
-			chinchou3->hit = true;
-			chinchou3->hitTimer.Start();
-		}
+		chinchou1->hit = true;
 	}
+
+	if (dir == Chinchou2Bumper) {
+		App->audio->PlayFx(chinchou_hitSFX);
+		chinchou2->hit = true;
+	}
+
+	if (dir == Chinchou3Bumper) {
+		App->audio->PlayFx(chinchou_hitSFX);
+		chinchou3->hit = true;
+	}
+	
 }
 
 // Load assets
