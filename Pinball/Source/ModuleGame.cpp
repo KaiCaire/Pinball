@@ -668,8 +668,10 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
+	//FUENTE PARA LOS TEXTOS INGAME
 	font = LoadFont("Assets/Ruby/Tiny5-Regular.ttf");
 
+	//CARGAR DISTINTAS TEXTURAS
 	emptyBoard = LoadTexture("Assets/Ruby/bg+mart.png");
 	spoinkSheet = LoadTexture("Assets/Ruby/spoink_sheet.png");
 	pikachuSheet = LoadTexture("Assets/Ruby/pikachu_sheet.png");
@@ -682,23 +684,16 @@ bool ModuleGame::Start()
 	ballSave.height = ballSave.height * 2;
 	ballSave.width = ballSave.width * 2;
 
+	ContactImpulserRight = LoadTexture("Assets/Ruby/ContactImpulserRight.png");
+	ContactImpulserRight.height = ContactImpulserRight.height * 2;
+	ContactImpulserRight.width = ContactImpulserRight.width * 2;
 
-	ContactFlipperRight = LoadTexture("Assets/Ruby/ContactImpulserRight.png");
-	ContactFlipperRight.height = ContactFlipperRight.height * 2;
-	ContactFlipperRight.width = ContactFlipperRight.width * 2;
-
-	ContactFlipperLeft = LoadTexture("Assets/Ruby/ContactImpulserLeft.png");
-	ContactFlipperLeft.height = ContactFlipperLeft.height * 2;
-	ContactFlipperLeft.width = ContactFlipperLeft.width * 2;
-
-	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
-	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
-
-	spoink = new Spring(App->physics, 472, 775, this, spoinkSheet);
+	ContactImpulserLeft = LoadTexture("Assets/Ruby/ContactImpulserLeft.png");
+	ContactImpulserLeft.height = ContactImpulserLeft.height * 2;
+	ContactImpulserLeft.width = ContactImpulserLeft.width * 2;
 
 
 	//CARGAR FRAMES DE LA ANIMACIÓN
-
 	frames[0] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
 	frames[1] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_3.png");
 	frames[2] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_4.png");
@@ -723,7 +718,8 @@ bool ModuleGame::Start()
 	//CARGAR FRAMES DE LA ANIMACIÓN PIKACHU
 	frames_pikachu[0] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_1.png");
 	frames_pikachu[1] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_2.png");
-	
+
+	//CARGAR FRAMES DE LA ANIMACIÓN WIN Y AJSUTES DE TAMAÑO
 	frames_Win[0] = LoadTexture("Assets/Ruby/win_1.png");
 	frames_Win[0].height = frames_Win[0].height * 2;
 	frames_Win[0].width = frames_Win[0].width * 2;
@@ -732,25 +728,29 @@ bool ModuleGame::Start()
 	frames_Win[1].height = frames_Win[1].height * 2;
 	frames_Win[1].width = frames_Win[1].width * 2;
 
+	//CREACION DE OBJETOS
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 
 	rFlip = new RightFlipper(App->physics, 280, 790, this, palancaderSheet);
 	lFlip = new LeftFlipper(App->physics, 200, 790, this, palancaizqSheet);
 
-	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
-	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, Points); //Top points
-
 	blocker = new Block(App->physics, 198, 798, this, emptyBoard);
 	blocker->changeColision(false);
 
-	sensorBlock = App->physics->CreateRectangleSensor(360, 200, 20, 50, b2_staticBody, 10);
+	rubyBoard = new Board(App->physics, 0, 0, this, emptyBoard);
+	rubyObstacle = new Obstacle(App->physics, 0, 0, this, emptyBoard);
 
+	spoink = new Spring(App->physics, 472, 775, this, spoinkSheet);
+
+	//SENSORES
+	sensorBlock = App->physics->CreateRectangleSensor(360, 200, 20, 50, b2_staticBody, startBlocker);
+	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
+	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, Points); //Top points
 	sensor = App->physics->CreateRectangleSensor(390, 705, 80, 20, b2_staticBody, Points);  //Left points
-
 	sensor = App->physics->CreateRectangleSensor(90, 705, 80, 20, b2_staticBody, Points);   //Right points
-
 	sensor = App->physics->CreateRectangleSensor(242, 850, 82, 10, b2_staticBody, Dead);   //Dead
 
+	//MUSICA Y EFECTOS DE SONIDO
 	music = LoadMusicStream("Assets/Ruby/Music Tracks/RedTableTrack.mp3");
 	gameOverMusic = LoadSound("Assets/Ruby/Music Tracks/Game Over.mp3");
 	winMusic = LoadSound("Assets/Ruby/Music Tracks/You Win.mp3");
@@ -840,12 +840,31 @@ update_status ModuleGame::Update()
 
 		spoink->texture = frames[currentFrame];
 
+		// RECOMPENSA POR PUNTUACIÓN
+		if (player.actualScore >= 100 && !extralife) {
+
+			if(textCounter == 0){
+				player.lifes += 1;
+				PlaySound(deadSFX);
+			}
+			else if (textCounter <=25 || textCounter >= 50 && textCounter <= 75 || textCounter >= 100 && textCounter <= 125 || textCounter >= 150 && textCounter <= 175) 
+				DrawTextEx(font, "EXTRA LIFE!", { 150, 440 }, 35, 5, RED);
+
+			else  DrawTextEx(font, "EXTRA LIFE!", { 150, 440 }, 35, 5, ORANGE);
+			if (textCounter == 160) {
+				extralife = true;
+				textCounter = 0;
+			}
+			textCounter++;
+		}
+
+		//TIPOS DE IMPULSO 
 		if (canImpulse) {
 			
 			DrawRectangle(0, 440, 700, 25, WHITE);
 			DrawTextEx(font, "Hold/release DOWN arrow to shot!", { 100, 440 }, 25, 0, BLACK);
 
-			if (basicImpulser)
+			if (basicImpulser) //IMPULSORES LATERALES (PÌKACHU)
 			{
 				if (IsKeyReleased(KEY_DOWN)) {
 					// Apply a force to the plunger when the space key is pressed
@@ -855,7 +874,7 @@ update_status ModuleGame::Update()
 					basicImpulser = false;
 				}
 			}
-			else
+			else //IMPULSOR SPOINK
 			{
 				if (IsKeyDown(KEY_DOWN)){
 					App->audio->PlayFx(spoink_chargeSFX);
@@ -913,6 +932,7 @@ update_status ModuleGame::Update()
 			if (cnt < 1500 && player.lifes != 1){
 				PlaySound(deadSFX);
 				
+				//ANIMACIÓN DE APARACIÓN Y MOVIMIENTO DE LATIAS
 				if (cnt<=150 || cnt >= 1200){
 					DrawTexture(ballSave, cntAnimation, 450, WHITE);
 					cntAnimation += 5;
@@ -933,7 +953,7 @@ update_status ModuleGame::Update()
 				}
 				cnt +=5;
 			}
-			else 
+			else //RESET VARIABLES INGAME
 			{ 
 				ball->updatePosition();
 				player.lifes -= 1;
@@ -945,11 +965,11 @@ update_status ModuleGame::Update()
 				cnt = 0;
 			}
 		}
-		else
+		else // BLOQUES DE IMPULSO 
 		{
 			if (contactLeft && cnt < 12)
 			{
-				DrawTexture(ContactFlipperLeft, 130, 660, WHITE);
+				DrawTexture(ContactImpulserLeft, 130, 660, WHITE);
 				cnt++;
 			}
 			else if (!contactRight) {
@@ -959,7 +979,7 @@ update_status ModuleGame::Update()
 
 			if (contactRight && cnt < 12)
 			{
-				DrawTexture(ContactFlipperRight, 305, 660, WHITE);
+				DrawTexture(ContactImpulserRight, 305, 660, WHITE);
 				cnt++;
 			}
 			else if (!contactLeft) {
@@ -968,16 +988,11 @@ update_status ModuleGame::Update()
 			}
 		}
 
-
-		if (IsKeyReleased(KEY_A)) {
-			printf("%d, %d, \n", GetMouseX(), GetMouseY());
-		}
-
-		if (player.lifes == 0) {
+		if (player.lifes == 0) { // WIN LOSE CONDITION
 
 			StopMusicStream(music);
 
-			if(player.actualScore < player.bestScore){
+			if(player.actualScore < player.bestScore || player.actualScore == 0){
 				PlaySound(gameOverMusic);
 				state = State::DEAD;
 			}
@@ -990,8 +1005,7 @@ update_status ModuleGame::Update()
 		pikachu->Update();
 		spoink->Update();
 
-		//text (scores) rendering
-		 
+		//SCORES RENDER
 		sprintf_s(cadena, "%d", player.actualScore);
 		DrawTextEx(font, cadena, { 410, 822}, 30,0, WHITE);
 
@@ -1009,6 +1023,7 @@ update_status ModuleGame::Update()
 
 		DrawTexture(gameOver,40, 400, WHITE);
 
+		//PARPADEO TEXTO
 		if (cnt >= 20) {
 			DrawTextEx(font, "PRESS SPACE TO CONTINUE", { 100, 440 }, 25, 0, BLACK);
 		}
@@ -1024,7 +1039,7 @@ update_status ModuleGame::Update()
 		break;
 
 	case State::SCORE:
-
+		//ACTUALIZACIÓN SCORE ANTES DE VOLVER A INGAME
 		if (player.actualScore > player.bestScore){
 			player.bestScore = player.actualScore;
 		}
@@ -1043,6 +1058,7 @@ update_status ModuleGame::Update()
 
 		sprintf_s(cadena, "NEW RECORD : %d", player.actualScore);
 
+		//PARPADEO TEXTO
 		if (cnt >= 20) {
 			
 			DrawTexture(frames_Win[0], 40, 400, WHITE);
@@ -1129,8 +1145,18 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 bool ModuleGame::CleanUp()
 {
 	LOG("Unloading Intro scene");
+
 	UnloadTexture(emptyBoard);
 	UnloadTexture(ballTex);
+	UnloadTexture(spoinkSheet);
+	UnloadTexture(pikachuSheet);
+	UnloadTexture(ContactImpulserLeft);
+	UnloadTexture(ContactImpulserRight);
+	UnloadTexture(ballSave);
+
+	for (int z = 1;z < 14;z++) UnloadTexture(frames_Latias[z]);
+	for (int z = 0;z < 2;z++) UnloadTexture(frames_Win[z]);
+	for (int z = 0;z < 8;z++) UnloadTexture(frames[z]);
 
 	StopMusicStream(music);
 	UnloadMusicStream(music);
@@ -1139,8 +1165,6 @@ bool ModuleGame::CleanUp()
 	delete rubyBoard;
 	delete spoink;
 	delete pikachu;
-	//delete palancaDer;
-	//delete palancaIzq;
 	delete rFlip;
 	delete lFlip;
 

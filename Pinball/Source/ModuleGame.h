@@ -15,7 +15,6 @@ class Ball;
 class Obstacle;
 class Spring;
 class Pikachu;
-class Pikachu;
 
 class Block;
 
@@ -35,6 +34,7 @@ class LeftFlipper;
 #define Impulser 6
 #define PikachuImpulser 7 
 #define SpringImpulser 8
+#define startBlocker 10
 
 #define Dead 9
 
@@ -108,8 +108,8 @@ public:
 	Texture2D ballSave;
 
 
-	Texture2D ContactFlipperLeft;
-	Texture2D ContactFlipperRight;
+	Texture2D ContactImpulserLeft;
+	Texture2D ContactImpulserRight;
 
 	Spring* spoink;
 	Texture2D spoinkSheet;
@@ -144,4 +144,7 @@ public:
 
 	bool contactRight;
 	bool contactLeft;
+
+	bool extralife = false;
+	int textCounter;
 };
