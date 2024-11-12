@@ -15,7 +15,7 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 	debug = false;
 }
 
-// Destructor
+// DESTRUCTOR
 ModulePhysics::~ModulePhysics()
 {
 }
@@ -302,8 +302,6 @@ update_status ModulePhysics::PostUpdate()
 	Vector2 mousePosition = GetMousePosition();
 	b2Vec2 pMousePosition = b2Vec2(PIXEL_TO_METERS(mousePosition.x), PIXEL_TO_METERS(mousePosition.y));
 
-	// Bonus code: this will iterate all objects in the world and draw the circles
-	// You need to provide your own macro to translate meters to pixels
 	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext())
 	{
 		for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
@@ -395,8 +393,6 @@ update_status ModulePhysics::PostUpdate()
 		mouse_joint = (b2MouseJoint*)world->CreateJoint(&def);
 	}
 
-	// TODO 3: If the player keeps pressing the mouse button, update
-	// target position and draw a red line between both anchor points
 	else if (mouse_joint && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 		mouse_joint->SetTarget(pMousePosition);
 		b2Vec2 anchorPosition = mouse_joint->GetBodyB()->GetPosition();
@@ -406,7 +402,6 @@ update_status ModulePhysics::PostUpdate()
 		DrawLine(anchorPosition.x, anchorPosition.y, mousePosition.x, mousePosition.y, RED);
 	}
 
-	// TODO 4: If the player releases the mouse button, destroy the joint
 	else if (mouse_joint && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
 		world->DestroyJoint(mouse_joint);
 		mouse_joint = nullptr;
@@ -468,8 +463,6 @@ int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& no
 	{
 		if (fixture->GetShape()->RayCast(&output, input, body->GetTransform(), 0) == true)
 		{
-			// do we want the normal ?
-
 			float fx = (float)(x2 - x1);
 			float fy = (float)(y2 - y1);
 			float dist = sqrtf((fx * fx) + (fy * fy));

@@ -819,10 +819,10 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	//FUENTE PARA LOS TEXTOS INGAME
+	//FONT FOR INTERACTIVE TEXT
 	font = LoadFont("Assets/Ruby/Tiny5-Regular.ttf");
 
-	//CARGAR DISTINTAS TEXTURAS
+	//LOAD DIFERENTS TEXTURES
 	emptyBoard = LoadTexture("Assets/Ruby/bg+mart.png");
 	spoinkSheet = LoadTexture("Assets/Ruby/spoink_sheet.png");
 	pikachuSheet = LoadTexture("Assets/Ruby/pikachu_sheet.png");
@@ -845,17 +845,19 @@ bool ModuleGame::Start()
 	ContactImpulserLeft.height = ContactImpulserLeft.height * 2;
 	ContactImpulserLeft.width = ContactImpulserLeft.width * 2;
 
-	//CARGAR FRAMES DE LA ANIMACIÓN
+	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (SPOINK)
 	frames[0] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
 	frames[1] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_3.png");
 	frames[2] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_4.png");
 	frames[3] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_2.png");
 	frames[4] = LoadTexture("Assets/Ruby/spoink_sheet/spoink_sheet_1.png");
 
+	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (SPOINK COMPRESS)
 	frames[5] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_1.png");
 	frames[6] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_2.png");
 	frames[7] = LoadTexture("Assets/Ruby/spoink_sheet_A/spoink_sheet_A_3.png");
 
+	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (LATIAS)
 	for (int z = 1;z < 14;z++)
 	{
 		sprintf_s(cadena, "Assets/Ruby/ball_save/ball_save_%d.png", z);
@@ -864,31 +866,23 @@ bool ModuleGame::Start()
 		frames_Latias[z].width = frames_Latias[z].width * 2;
 	}
 
-	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
-
-	//CARGAR FRAMES DE LA ANIMACIÓN PIKACHU
+	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (PIKACHU)
 	frames_pikachu[0] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_1.png");
 	frames_pikachu[1] = LoadTexture("Assets/Ruby/pikachu_sheet/pikachu_sheet_2.png");
 
-	chinchou1 = new Chinchou(App->physics, 292, 270, this, chinchouSheet, Chinchou1Bumper);
-	chinchou2 = new Chinchou(App->physics, 256, 306, this, chinchouSheet, Chinchou2Bumper);
-	chinchou3 = new Chinchou(App->physics, 308, 320, this, chinchouSheet, Chinchou3Bumper);
-
-	//CARGAR FRAMES DE LA ANIMACIÓN DE CHINCHOU (IDLE)
+	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (CHINCHOU)
 	frames_chinchou_idle[0] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_idle1.png");
 	frames_chinchou_idle[1] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_idle2.png");
 
-
-	//CARGAR FRAMES DE LA ANIMACIÓN DE CHINCHOU (HIT)
+	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (CHINCHOU HIT)
 	frames_chinchou_hit[0] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_hit1.png");
 	frames_chinchou_hit[1] = LoadTexture("Assets/Ruby/chinchou_sheet/chinchou_hit2.png");
 
-	makuhita = new Makuhita(App->physics, 386, 546, this, makuhitaSheet);
-	//CARGAR FRAMES DE LA ANIMACIÓN DE MAKUHITA (IDLE)
+
+	//LOADING TEXTURES INTO THE ARRAY TO GENERATE AN ANIMATION (MAKUHITA)
 	frames_makuhita_idle[0] = LoadTexture("Assets/Ruby/makuhita_sheet/makuhita_idle1.png");
 	frames_makuhita_idle[1] = LoadTexture("Assets/Ruby/makuhita_sheet/makuhita_idle2.png");
 
-	chikorita = new Chikorita(App->physics, 110, 434, this, chikoritaSheet);
 	//CARGAR FRAMES DE LA ANIMACIÓN DE MAKUHITA (IDLE)
 	frames_chikorita_idle[0] = LoadTexture("Assets/Ruby/chikorita_sheet/chikorita_idle1.png");
 	frames_chikorita_idle[1] = LoadTexture("Assets/Ruby/chikorita_sheet/chikorita_idle2.png");
@@ -902,8 +896,13 @@ bool ModuleGame::Start()
 	frames_Win[1].height = frames_Win[1].height * 2;
 	frames_Win[1].width = frames_Win[1].width * 2;
 
-	//CREACION DE OBJETOS
+	//GENERATE ALL POKEMONS AND OBJECTS
 	pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
+	makuhita = new Makuhita(App->physics, 386, 546, this, makuhitaSheet);
+	chikorita = new Chikorita(App->physics, 110, 434, this, chikoritaSheet);
+	chinchou1 = new Chinchou(App->physics, 292, 270, this, chinchouSheet, Chinchou1Bumper);
+	chinchou2 = new Chinchou(App->physics, 256, 306, this, chinchouSheet, Chinchou2Bumper);
+	chinchou3 = new Chinchou(App->physics, 308, 320, this, chinchouSheet, Chinchou3Bumper);
 
 	rFlip = new RightFlipper(App->physics, 280, 790, this, palancaderSheet);
 	lFlip = new LeftFlipper(App->physics, 200, 790, this, palancaizqSheet);
@@ -916,15 +915,15 @@ bool ModuleGame::Start()
 
 	spoink = new Spring(App->physics, 472, 775, this, spoinkSheet);
 
-	//SENSORES
+	//SENSORS
 	sensorBlock = App->physics->CreateRectangleSensor(360, 200, 20, 50, b2_staticBody, startBlocker);
 	sensor = App->physics->CreateRectangleSensor(65, 780, 30, 20, b2_staticBody, Impulser);
 	sensor = App->physics->CreateRectangleSensor(275, 210, 120, 10, b2_staticBody, Points); //Top points
 	sensor = App->physics->CreateRectangleSensor(390, 705, 80, 20, b2_staticBody, Points);  //Left points
 	sensor = App->physics->CreateRectangleSensor(90, 705, 80, 20, b2_staticBody, Points);   //Right points
-	sensor = App->physics->CreateRectangleSensor(242, 850, 82, 10, b2_staticBody, Dead);   //Dead
+	sensor = App->physics->CreateRectangleSensor(242, 850, 82, 10, b2_staticBody, Dead);  
 
-	//MUSICA Y EFECTOS DE SONIDO
+	//MUSIC AND SOUND EFFECTS
 	music = LoadMusicStream("Assets/Ruby/Music Tracks/RedTableTrack.mp3");
 	gameOverMusic = LoadSound("Assets/Ruby/Music Tracks/Game Over.mp3");
 	winMusic = LoadSound("Assets/Ruby/Music Tracks/You Win.mp3");
@@ -940,6 +939,7 @@ bool ModuleGame::Start()
 
 	chinchou_hitSFX = App->audio->LoadFx("Assets/Ruby/Sounds/chinchou_hit.wav");
 
+	// MUSIC SETTINGS
 	SetMusicVolume(music, 0.4f);
 	SetSoundVolume(extraLifeSound, 2.0f);
 
@@ -965,8 +965,6 @@ bool ModuleGame::Start()
 	return ret;
 }
 
-
-// Update: draw background
 update_status ModuleGame::Update()
 {
 	switch (state)
@@ -996,18 +994,18 @@ update_status ModuleGame::Update()
 		{
 			timer_pikachu = 0.0f;
 			currentFrame_pikachu++;
-			if (currentFrame_pikachu >= 2) currentFrame_pikachu = 0;	// Reinicia el ciclo
+			if (currentFrame_pikachu >= 2) currentFrame_pikachu = 0;	// RESET 
 		}
 		pikachu->texture = frames_pikachu[currentFrame_pikachu];
 
-		// ANIMACION SPOINK
+		// ANIMAtION SPOINK
 		timer += GetFrameTime();
 
 		if(!changeAnimation) {
 			if (timer >= frameTime) {
 				timer = 0.0f;
 				currentFrame++;
-				if (currentFrame >= 5) currentFrame = 0; // Reinicia el ciclo
+				if (currentFrame >= 5) currentFrame = 0; // RESET
 			}
 		}
 		else
@@ -1015,7 +1013,7 @@ update_status ModuleGame::Update()
 			if (timer >= frameTime) {
 				timer = 0.0f;
 				currentFrame++;
-				if (currentFrame >= 7) currentFrame = 5; // Reinicia el ciclo
+				if (currentFrame >= 7) currentFrame = 5; // RESET
 			}
 		}
 
@@ -1027,13 +1025,13 @@ update_status ModuleGame::Update()
 		{
 			timer_chinchou = 0.0f;
 			currentFrame_chinchou++;
-			if (currentFrame_chinchou >= 2)currentFrame_chinchou = 0;
-			// Reinicia el ciclo
+			if (currentFrame_chinchou >= 2)currentFrame_chinchou = 0; // RESET
 		}
 
+		//CHANGE ANIMATION IF CHINCHOU 1 HIT
 		if (chinchou1->hit) {
 			chinchou1->texture = frames_chinchou_hit[currentFrame_chinchou];
-
+			
 			cntAnimation++;
 			if (cntAnimation == 35){
 				chinchou1->hit= false;
@@ -1041,9 +1039,10 @@ update_status ModuleGame::Update()
 			}
 		}
 		else {
-			chinchou1->texture = frames_chinchou_idle[currentFrame_chinchou];
+			chinchou1->texture = frames_chinchou_idle[currentFrame_chinchou]; //CHINCHOU 1 IDLE ANIMATION
 		}
 
+		//CHANGE ANIMATION IF CHINCHOU 2 HIT
 		if (chinchou2->hit) {
 			chinchou2->texture = frames_chinchou_hit[currentFrame_chinchou];
 
@@ -1054,9 +1053,10 @@ update_status ModuleGame::Update()
 			}
 		}
 		else {
-			chinchou2->texture = frames_chinchou_idle[currentFrame_chinchou];
+			chinchou2->texture = frames_chinchou_idle[currentFrame_chinchou]; // CHINCHOU 2 IDLE ANIMATION
 		}
 
+		//CHANGE ANIMATION IF CHINCHOU 3 HIT
 		if (chinchou3->hit) {
 			chinchou3->texture = frames_chinchou_hit[currentFrame_chinchou];
 
@@ -1067,7 +1067,7 @@ update_status ModuleGame::Update()
 			}
 		}
 		else {
-			chinchou3->texture = frames_chinchou_idle[currentFrame_chinchou];
+			chinchou3->texture = frames_chinchou_idle[currentFrame_chinchou]; //CHINCHOU 3 IDLE ANIMATION
 		}
 
 		//ANIMATION MAKUHITA
@@ -1076,7 +1076,7 @@ update_status ModuleGame::Update()
 		{
 			timer_makuhita = 0.0f;
 			currentFrame_makuhita++;
-			if (currentFrame_makuhita >= 2) currentFrame_makuhita = 0;	// Reinicia el ciclo
+			if (currentFrame_makuhita >= 2) currentFrame_makuhita = 0;		// RESET
 
 		}
 		makuhita->texture = frames_makuhita_idle[currentFrame_makuhita];
@@ -1086,7 +1086,7 @@ update_status ModuleGame::Update()
 		{
 			timer_chikorita = 0.0f;
 			currentFrame_chikorita++;
-			if (currentFrame_chikorita >= 2) currentFrame_chikorita = 0;	// Reinicia el ciclo
+			if (currentFrame_chikorita >= 2) currentFrame_chikorita = 0;	// RESET
 
 		}
 		chikorita->texture = frames_chikorita_idle[currentFrame_chikorita];
@@ -1115,10 +1115,10 @@ update_status ModuleGame::Update()
 			DrawRectangle(0, 440, 700, 25, WHITE);
 			DrawTextEx(font, "Hold/release DOWN arrow to shoot!", { 100, 440 }, 25, 0, BLACK);
 
-			if (basicImpulser) //IMPULSORES LATERALES (PÌKACHU)
+			if (basicImpulser) //LATERAL IMPULSERS (PIKACHU)
 			{
 				if (IsKeyReleased(KEY_DOWN)) {
-					// Apply a force to theK plunger when the space key is pressed
+					// APPLY A FORCE TO THEK PLUNGER WHEN THE SPACE KEY IS PRESSED
 					b2Vec2 force(0.0f, -0.7f);
 					ball->ShootBall(force);
 					canImpulse = false;
@@ -1129,7 +1129,6 @@ update_status ModuleGame::Update()
 			{
 				if (IsKeyPressed(KEY_DOWN)) {
 					App->audio->PlayFx(spoink_chargeSFX);
-					//con IsKeyDown el sonido de cargar sonaba tras haber disparado
 				}
 
 				if (IsKeyDown(KEY_DOWN)){ 
@@ -1147,23 +1146,23 @@ update_status ModuleGame::Update()
 			}
 		}
 
-		//spring movement
+		//SPRING MOVEMENT
 		spoinkPos = spoink->joint->GetJointTranslation();
 
 		if (spoinkPos >= spoink->joint->GetUpperLimit() - 0.001f) {
-			// Joint has reached or is very close to the upper limit
-			spoink->joint->SetMotorSpeed(-0.2f);  // Move it back down
+			// JOINT HAS REACHED OR IS VERY CLOSE TO THE UPPER LIMIT
+			spoink->joint->SetMotorSpeed(-0.2f);  // MOVE IT BACK DOWN
 		}
 		else if (spoinkPos <= spoink->joint->GetLowerLimit() + 0.001f) {
-			// Joint has reached or is very close to the lower limit
-			spoink->joint->SetMotorSpeed(0.0f);  // Stop at the bottom
+			// JOINT HAS REACHED OR IS VERY CLOSE TO THE LOWER LIMIT
+			spoink->joint->SetMotorSpeed(0.0f);  // STOP AT THE BOTTOM
 		}
 
-		//flipper movement
+		//FLIPPER MOVEMENT
 
 		if (IsKeyPressed(KEY_RIGHT)) {
 			App->audio->PlayFx(flipperFX);
-			//The revolute joint angle is positive when its body rotates CCW about the angle point.
+			//THE REVOLUTE JOINT ANGLE IS POSITIVE WHEN ITS BODY ROTATES CCW ABOUT THE ANGLE POINT
 			pikachu = new Pikachu(App->physics, 415, 775, this, pikachuSheet);
 			rFlip->revJoint->SetMotorSpeed(-4.0f);
 			
@@ -1182,7 +1181,7 @@ update_status ModuleGame::Update()
 			lFlip->revJoint->SetMotorSpeed(-4.0f);
 		}
 
-		//lives management
+		//LIVES MANAGEMENT
 		if (dead) {
 			if (cnt < 1500 && player.lifes != 1){
 				if(cnt == 0)PlaySound(deadSFX);
@@ -1242,7 +1241,8 @@ update_status ModuleGame::Update()
 			}
 		}
 
-		if (player.lifes == 0) { // WIN LOSE CONDITION
+		// WIN LOSE CONDITION
+		if (player.lifes == 0) { 
 
 			StopMusicStream(music);
 
@@ -1256,6 +1256,7 @@ update_status ModuleGame::Update()
 			}
 		}
 
+		//UPDATES
 		pikachu->Update();
 		spoink->Update();
 
@@ -1264,6 +1265,7 @@ update_status ModuleGame::Update()
 		chinchou3->Update();
 
 		makuhita->Update();
+		ball->Update();
 
 		//SCORES RENDER
 		sprintf_s(cadena, "%d", player.actualScore);
@@ -1273,8 +1275,6 @@ update_status ModuleGame::Update()
 		DrawTextEx(font, cadena, { 410, 805 }, 25, 0, YELLOW);
 		DrawTextEx(font, "BEST:", { 360, 808 }, 20, 0, YELLOW);
 
-		ball->Update();
-
 		break;
 
 	case State::DEAD:
@@ -1283,7 +1283,7 @@ update_status ModuleGame::Update()
 
 		DrawTexture(gameOver,40, 400, WHITE);
 
-		//PARPADEO TEXTO
+		//TEXT FLASHING
 		if (cnt >= 20) {
 			DrawTextEx(font, "PRESS SPACE TO CONTINUE", { 100, 440 }, 25, 0, BLACK);
 		}
@@ -1299,7 +1299,7 @@ update_status ModuleGame::Update()
 		break;
 
 	case State::SCORE:
-		//ACTUALIZACIÓN SCORE ANTES DE VOLVER A INGAME
+		//SCORE UPDATE BEFORE RETURNING TO INGAME
 		if (player.actualScore > player.bestScore){
 			player.bestScore = player.actualScore;
 		}
@@ -1345,11 +1345,12 @@ update_status ModuleGame::Update()
 	default:
 		break;
 	}
-
+	//LIFES RENDER 
 	DrawTexture(ballTex, 60, 825, WHITE);
 	sprintf_s(cadena, "%d", player.lifes);
 	DrawTextEx(font, cadena, { 80, 820 }, 25, 0, WHITE);
 
+	//ALAWAYS ON UPDATES
 	rFlip->Update();
 	lFlip->Update();
 
@@ -1364,6 +1365,8 @@ update_status ModuleGame::Update()
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB, int dir)
 {	
 	b2Vec2 force(0.0f, 0.0f);
+
+	// DIFFERENT TYPES OF RESPONSE DEPENDING ON WHAT YOU COLLIDE WITH
 
 	if (dir == SpringImpulser || dir == PikachuImpulser || dir == Impulser){
 		canImpulse = true;
